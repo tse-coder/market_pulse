@@ -1,4 +1,5 @@
-from ingestion.reddit import fetch_latest_posts
+from ingestion.reddit import fetch_latest_posts as fetch_reddit
+from ingestion.hacker_news import fetch_latest_posts as fetch_hackernews
 from processing.embeddings import generate_embeddings
 from processing.clustering import cluster_signals
 from processing.trend_scoring import calculate_trend_score
@@ -11,8 +12,10 @@ def run_pipeline():
     logger.info("Starting ingestion and processing pipeline")
     
     # 1. Ingestion
-    posts = fetch_latest_posts()
-    logger.info(f"Ingested {len(posts)} posts")
+    posts = fetch_reddit()
+    hn_posts = fetch_hackernews()
+    posts.extend(hn_posts)
+    logger.info(f"Ingested {len(posts)} posts total")
     
     # 2. Embeddings
     embeddings = generate_embeddings([p["content"] for p in posts])
