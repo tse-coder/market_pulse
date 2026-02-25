@@ -3,6 +3,7 @@ from fastapi.middleware.cors import CORSMiddleware
 from app.core.config import settings
 from app.api.routes import health, signals, trends
 import logging
+from app.db.database import connect_to_mongo, close_mongo_connection
 
 logger = logging.getLogger(__name__)
 
@@ -27,7 +28,10 @@ app.include_router(trends.router, prefix="/api/trends", tags=["trends"])
 @app.on_event("startup")
 async def startup_event():
     logger.info("Starting up Market Pulse Backend")
+    # establish mongo connection for the app
+    await connect_to_mongo()
 
 @app.on_event("shutdown")
 async def shutdown_event():
     logger.info("Shutting down Market Pulse Backend")
+    await close_mongo_connection()
