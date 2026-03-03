@@ -10,6 +10,47 @@ export default function Home() {
       <div className="absolute inset-0 bg-[url('https://grainy-gradients.vercel.app/noise.svg')] opacity-20 brightness-100 pointer-events-none" />
       <div className="absolute inset-0 bg-[linear-gradient(to_right,#ffffff05_1px,transparent_1px),linear-gradient(to_bottom,#ffffff05_1px,transparent_1px)] bg-[size:40px_40px] pointer-events-none" />
 
+      {/* Scattered background icons */}
+      <div className="absolute top-[15%] left-[10%] w-16 h-16 bg-white/5 backdrop-blur-md rounded-2xl border border-white/10 flex items-center justify-center animate-float pointer-events-none md:flex hidden">
+        <img
+          src="/brand-icons/reddit/icon-primary.jpeg"
+          alt="Reddit"
+          className="w-10 h-10 rounded-lg opacity-40 grayscale hover:grayscale-0 transition-all duration-700"
+        />
+      </div>
+
+      <div className="absolute top-[20%] right-[15%] w-20 h-20 bg-white/5 backdrop-blur-md rounded-3xl border border-white/10 flex items-center justify-center animate-float-delayed pointer-events-none md:flex hidden">
+        <img
+          src="/brand-icons/product-hunt/icon-primary.png"
+          alt="Product Hunt"
+          className="w-12 h-12 rounded-xl opacity-40 grayscale hover:grayscale-0 transition-all duration-700"
+        />
+      </div>
+
+      <div className="absolute bottom-[25%] left-[18%] w-14 h-14 bg-white/5 backdrop-blur-md rounded-xl border border-white/10 flex items-center justify-center animate-float-reverse pointer-events-none md:flex hidden">
+        <img
+          src="/brand-icons/hacker-news/icon-primary.jpeg"
+          alt="Hacker News"
+          className="w-8 h-8 rounded-md opacity-40 grayscale hover:grayscale-0 transition-all duration-700"
+        />
+      </div>
+
+      <div className="absolute bottom-[15%] right-[10%] w-12 h-12 bg-white/5 backdrop-blur-md rounded-lg border border-white/10 flex items-center justify-center animate-float pointer-events-none md:flex hidden">
+        <img
+          src="/brand-icons/reddit/icon-primary.jpeg"
+          alt="Reddit"
+          className="w-8 h-8 rounded-md opacity-20 grayscale"
+        />
+      </div>
+
+      <div className="absolute top-[60%] right-[5%] w-10 h-10 bg-white/5 backdrop-blur-md rounded-lg border border-white/10 flex items-center justify-center animate-float-reverse pointer-events-none md:flex hidden">
+        <img
+          src="/brand-icons/hacker-news/icon-secondary.png"
+          alt="Hacker News"
+          className="w-6 h-6 rounded-sm opacity-20 grayscale"
+        />
+      </div>
+
       <main className="relative z-10 flex flex-col items-center max-w-4xl text-center">
         <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full border border-white/10 bg-white/5 text-[10px] font-medium tracking-[0.2em] uppercase text-zinc-400 mb-8 animate-fade-in">
           <span className="shrink-0 w-1.5 h-1.5 rounded-full bg-blue-500 animate-pulse" />
