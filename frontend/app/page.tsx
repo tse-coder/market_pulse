@@ -2,105 +2,115 @@ import Link from "next/link";
 
 export default function Home() {
   return (
-    <div className="relative min-h-screen bg-[#050505] text-white flex flex-col items-center justify-center px-6 overflow-hidden">
-      {/* Background radial glow */}
-      <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[800px] h-[800px] bg-blue-600/10 rounded-full blur-[120px] pointer-events-none" />
+    <div className="relative min-h-screen bg-white text-zinc-900 flex flex-col items-center justify-center px-6 overflow-hidden font-sans">
+      {/* Subtle top border decorative element */}
+      <div className="absolute top-0 left-0 right-0 h-1.5 bg-zinc-900" />
 
-      {/* Subtle grid pattern */}
-      <div className="absolute inset-0 bg-[url('https://grainy-gradients.vercel.app/noise.svg')] opacity-20 brightness-100 pointer-events-none" />
-      <div className="absolute inset-0 bg-[linear-gradient(to_right,#ffffff05_1px,transparent_1px),linear-gradient(to_bottom,#ffffff05_1px,transparent_1px)] bg-[size:40px_40px] pointer-events-none" />
+      Background Effects
+      <div className="absolute inset-0 bg-[url('https://grainy-gradients.vercel.app/noise.svg')] opacity-[0.03] brightness-0 pointer-events-none" />
+      <div className="absolute inset-0 bg-[linear-gradient(to_right,#00000008_1px,transparent_1px),linear-gradient(to_bottom,#00000008_1px,transparent_1px)] bg-[size:60px_60px] pointer-events-none" />
+      <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[1000px] h-[1000px] bg-blue-500/[0.03] rounded-full blur-[120px] pointer-events-none" />
 
-      {/* Scattered background icons */}
-      <div className="absolute top-[15%] left-[10%] w-16 h-16 bg-white/5 backdrop-blur-md rounded-2xl border border-white/10 flex items-center justify-center animate-float pointer-events-none md:flex hidden">
+      {/* Floating Icons */}
+      <div className="absolute top-[15%] left-[10%] w-20 h-20 bg-white shadow-[0_20px_50px_rgba(0,0,0,0.08)] rounded-3xl border border-zinc-100 flex items-center justify-center animate-float pointer-events-none md:flex hidden">
         <img
           src="/brand-icons/reddit/icon-primary.jpeg"
           alt="Reddit"
-          className="w-10 h-10 rounded-lg opacity-40 grayscale hover:grayscale-0 transition-all duration-700"
+          className="w-12 h-12 rounded-xl"
         />
       </div>
 
-      <div className="absolute top-[20%] right-[15%] w-20 h-20 bg-white/5 backdrop-blur-md rounded-3xl border border-white/10 flex items-center justify-center animate-float-delayed pointer-events-none md:flex hidden">
+      <div className="absolute top-[20%] right-[15%] w-24 h-24 bg-white shadow-[0_20px_50px_rgba(0,0,0,0.08)] rounded-[2rem] border border-zinc-100 flex items-center justify-center animate-float-delayed pointer-events-none md:flex hidden">
         <img
           src="/brand-icons/product-hunt/icon-primary.png"
           alt="Product Hunt"
-          className="w-12 h-12 rounded-xl opacity-40 grayscale hover:grayscale-0 transition-all duration-700"
+          className="w-14 h-14 rounded-2xl"
         />
       </div>
 
-      <div className="absolute bottom-[25%] left-[18%] w-14 h-14 bg-white/5 backdrop-blur-md rounded-xl border border-white/10 flex items-center justify-center animate-float-reverse pointer-events-none md:flex hidden">
+      <div className="absolute bottom-[25%] left-[18%] w-16 h-16 bg-white shadow-[0_20px_50px_rgba(0,0,0,0.1)] rounded-2xl border border-zinc-100 flex items-center justify-center animate-float-reverse pointer-events-none md:flex hidden">
         <img
           src="/brand-icons/hacker-news/icon-primary.jpeg"
           alt="Hacker News"
-          className="w-8 h-8 rounded-md opacity-40 grayscale hover:grayscale-0 transition-all duration-700"
+          className="w-10 h-10 rounded-lg"
         />
       </div>
 
-      <div className="absolute bottom-[15%] right-[10%] w-12 h-12 bg-white/5 backdrop-blur-md rounded-lg border border-white/10 flex items-center justify-center animate-float pointer-events-none md:flex hidden">
-        <img
-          src="/brand-icons/reddit/icon-primary.jpeg"
-          alt="Reddit"
-          className="w-8 h-8 rounded-md opacity-20 grayscale"
-        />
-      </div>
-
-      <div className="absolute top-[60%] right-[5%] w-10 h-10 bg-white/5 backdrop-blur-md rounded-lg border border-white/10 flex items-center justify-center animate-float-reverse pointer-events-none md:flex hidden">
-        <img
-          src="/brand-icons/hacker-news/icon-secondary.png"
-          alt="Hacker News"
-          className="w-6 h-6 rounded-sm opacity-20 grayscale"
-        />
-      </div>
-
-      <main className="relative z-10 flex flex-col items-center max-w-4xl text-center">
-        <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full border border-white/10 bg-white/5 text-[10px] font-medium tracking-[0.2em] uppercase text-zinc-400 mb-8 animate-fade-in">
-          <span className="shrink-0 w-1.5 h-1.5 rounded-full bg-blue-500 animate-pulse" />
+      <main className="relative z-10 flex flex-col items-center max-w-5xl text-center">
+        <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full border border-zinc-100 bg-white shadow-sm text-[10px] font-black tracking-[0.3em] uppercase text-zinc-500 mb-12">
+          <span className="shrink-0 w-2 h-2 rounded-full bg-blue-500 animate-pulse" />
           Intelligence Engine 2.0
         </div>
 
-        <h1 className="text-5xl md:text-8xl font-bold tracking-tighter leading-[0.9] mb-8 bg-gradient-to-b from-white to-white/40 bg-clip-text text-transparent">
-          Listen to the <br />
-          <span className="text-white">Market Pulse.</span>
+        <h1 className="text-7xl md:text-[8rem] font-black tracking-tighter leading-[0.85] mb-12 text-zinc-900 uppercase italic">
+          Market <br />
+          <span className="text-zinc-200 non-italic">Pulse.</span>
         </h1>
 
-        <p className="text-lg md:text-xl text-zinc-400 font-light max-w-xl mb-12 leading-relaxed">
+        <p className="text-xl md:text-2xl text-zinc-500 max-w-2xl mb-16 leading-relaxed font-bold tracking-tight">
           AI-driven opportunity scanning. We capture signals across the software
           landscape so you can build what people actually want.
         </p>
 
-        <div className="flex flex-col sm:flex-row gap-4 items-center animate-fade-in-up">
+        <div className="flex flex-col sm:flex-row gap-8 items-center">
           <Link
             href="/feed"
-            className="group relative px-10 py-4 bg-white text-black font-semibold rounded-full overflow-hidden transition-all hover:scale-[1.02] active:scale-[0.98]"
+            className="group px-14 py-6 bg-zinc-900 text-white font-black rounded-2xl transition-all hover:bg-zinc-800 hover:scale-[1.05] active:scale-[0.95] uppercase text-[12px] tracking-[0.2em] flex items-center gap-4 shadow-2xl shadow-zinc-900/20"
           >
-            <div className="relative z-10 flex items-center gap-2">
-              Start Scanning
-              <svg
-                className="w-4 h-4 transition-transform group-hover:translate-x-1"
-                fill="none"
-                viewBox="0 0 24 24"
-                stroke="currentColor"
-              >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeWidth={2}
-                  d="M13 7l5 5m0 0l-5 5m5-5H6"
-                />
-              </svg>
-            </div>
+            Start Scanning
+            <svg
+              className="w-5 h-5 transition-transform group-hover:translate-x-1"
+              fill="none"
+              viewBox="0 0 24 24"
+              stroke="currentColor"
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth={3}
+                d="M13 7l5 5m0 0l-5 5m5-5H6"
+              />
+            </svg>
           </Link>
 
-          <button className="px-10 py-4 text-zinc-400 font-medium hover:text-white transition-colors">
-            Our Methodology
+          <button className="px-10 py-6 text-zinc-400 font-bold hover:text-zinc-900 transition-colors uppercase text-[11px] tracking-[0.3em]">
+            Methodology
           </button>
         </div>
       </main>
 
-      {/* Footer minimal info */}
-      <div className="absolute bottom-12 left-0 right-0 flex justify-center text-[10px] text-zinc-600 uppercase tracking-widest gap-8 z-10">
-        <span>Reddit Ingestion</span>
-        <span>Hacker News Analysis</span>
-        <span>Product Hunt Insights</span>
+      {/* Brand alignment bar */}
+      <div className="absolute bottom-12 left-0 right-0 flex justify-center items-center gap-12 z-10 opacity-40">
+        <div className="flex items-center gap-2 grayscale contrast-150">
+          <img
+            src="/brand-icons/reddit/icon-primary.jpeg"
+            alt="Reddit"
+            className="w-4 h-4 rounded-sm"
+          />
+          <span className="text-[10px] font-black uppercase tracking-widest">
+            Reddit
+          </span>
+        </div>
+        <div className="flex items-center gap-2 grayscale contrast-150">
+          <img
+            src="/brand-icons/hacker-news/icon-primary.jpeg"
+            alt="Hacker News"
+            className="w-4 h-4 rounded-sm"
+          />
+          <span className="text-[10px] font-black uppercase tracking-widest">
+            Hacker News
+          </span>
+        </div>
+        <div className="flex items-center gap-2 grayscale contrast-150">
+          <img
+            src="/brand-icons/product-hunt/icon-primary.png"
+            alt="Product Hunt"
+            className="w-4 h-4 rounded-sm"
+          />
+          <span className="text-[10px] font-black uppercase tracking-widest">
+            Product Hunt
+          </span>
+        </div>
       </div>
     </div>
   );

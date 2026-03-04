@@ -24,4 +24,5 @@ class Signal(Document):
     ai_topics = ListField(StringField())
     metadata = DictField()
     trend_score = FloatField(default=0.0)
+    total_score = FloatField(default=0.0)
     cluster_id = StringField()

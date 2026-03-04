@@ -22,8 +22,8 @@ async def get_signals(page: int = Query(1, ge=1), limit: int = Query(25, ge=1, l
     # Calculate skip and limit
     skip = (page - 1) * limit
 
-    # Sort by trend_score descending
-    cursor = coll.find().sort("trend_score", -1).skip(skip).limit(limit)
+    # Sort by total_score descending
+    cursor = coll.find().sort("total_score", -1).skip(skip).limit(limit)
     results = []
     async for doc in cursor:
         results.append(
@@ -33,11 +33,12 @@ async def get_signals(page: int = Query(1, ge=1), limit: int = Query(25, ge=1, l
                 "title": doc.get("title"),
                 "content": doc.get("content"),
                 "score": doc.get("score"),
+                "total_score": doc.get("total_score"),
+                "trend_score": doc.get("trend_score"),
                 "sentiment_score": doc.get("sentiment_score"),
                 "ai_summary": doc.get("ai_summary"),
                 "ai_sentiment": doc.get("ai_sentiment"),
                 "ai_topics": doc.get("ai_topics"),
-                "trend_score": doc.get("trend_score"),
                 "cluster_id": doc.get("cluster_id"),
                 "metadata": doc.get("metadata"),
                 "time": doc.get("time").isoformat() if doc.get("time") else None,

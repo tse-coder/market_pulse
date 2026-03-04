@@ -8,6 +8,8 @@ type DetailSectionProps = {
     time?: string;
     content: string;
     score?: number;
+    total_score?: number;
+    trend_score?: number;
     sentiment_score?: number;
     ai_summary?: string;
     ai_sentiment?: string;
@@ -23,22 +25,40 @@ function DetailSection({
   setSelectedFeedId,
 }: DetailSectionProps) {
   return (
-    <div className="p-8 max-w-2xl mx-auto">
-      <button
-        onClick={() => setSelectedFeedId(null)}
-        className="text-xs text-zinc-400 hover:text-blue-500 transition-colors mb-8"
-      >
-        ← CLOSE
-      </button>
-
-      <div className="mb-10">
-        <h1 className="text-xl font-bold text-zinc-800 mb-2 leading-tight">
+    <div className="p-12 max-w-2xl mx-auto">
+      <div className="mb-12">
+        <h1 className="text-2xl font-black text-zinc-900 mb-6 leading-tight tracking-tight">
           {selectedFeed.feedTitle}
         </h1>
-        <div className="flex gap-3 text-[10px] text-zinc-400 uppercase tracking-widest font-medium">
-          <span>{selectedFeed.source.replace("_", " ")}</span>
-          <span>•</span>
-          <span>
+        <div className="flex items-center gap-4 border-b border-zinc-100 pb-8">
+          <div className="flex items-center gap-2">
+            {selectedFeed.source === "reddit" && (
+              <img
+                src="/brand-icons/reddit/icon-primary.jpeg"
+                alt="R"
+                className="w-4 h-4 rounded-sm grayscale"
+              />
+            )}
+            {selectedFeed.source === "product_hunt" && (
+              <img
+                src="/brand-icons/product-hunt/icon-primary.png"
+                alt="P"
+                className="w-4 h-4 rounded-sm grayscale"
+              />
+            )}
+            {selectedFeed.source === "hacker_news" && (
+              <img
+                src="/brand-icons/hacker-news/icon-primary.jpeg"
+                alt="H"
+                className="w-4 h-4 rounded-sm grayscale"
+              />
+            )}
+            <span className="text-[10px] text-zinc-900 uppercase tracking-widest font-black">
+              {selectedFeed.source.replace("_", " ")}
+            </span>
+          </div>
+          <span className="text-zinc-200">/</span>
+          <span className="text-[10px] text-zinc-400 uppercase tracking-widest font-bold">
             {selectedFeed.time
               ? new Date(selectedFeed.time).toLocaleString()
               : ""}
@@ -46,64 +66,72 @@ function DetailSection({
         </div>
       </div>
 
-      <div className="prose prose-sm prose-zinc text-zinc-600 leading-relaxed mb-10">
+      <div className="prose prose-sm prose-zinc text-zinc-600 leading-relaxed mb-12 max-w-none">
         <div dangerouslySetInnerHTML={{ __html: selectedFeed.content }} />
       </div>
 
       {selectedFeed.link && (
-        <div className="mb-12">
+        <div className="mb-16">
           <a
             href={selectedFeed.link.url}
             target="_blank"
             rel="noreferrer"
-            className="text-xs text-blue-500 hover:underline inline-flex items-center gap-1"
+            className="inline-flex items-center gap-2 text-[10px] text-zinc-900 hover:underline uppercase tracking-widest font-black"
           >
-            VIEW SOURCE <span className="text-[10px]">↗</span>
+            VIEW SOURCE ↗
           </a>
         </div>
       )}
 
-      <div className="border-t border-zinc-100 pt-8 mt-12">
-        <h3 className="text-[10px] font-bold text-zinc-400 uppercase tracking-[0.2em] mb-6">
-          AI Insights
-        </h3>
-        <div className="space-y-6">
-          <div className="flex justify-between items-baseline border-b border-zinc-50 pb-2">
-            <span className="text-[10px] font-bold text-zinc-400 uppercase">
-              Sentiment
-            </span>
-            <span className="text-xs text-zinc-600">
-              {selectedFeed.ai_sentiment}
-            </span>
-          </div>
-          <div>
-            <span className="text-[10px] font-bold text-zinc-400 uppercase block mb-2">
-              Summary
-            </span>
-            <p className="text-xs text-zinc-500 leading-relaxed">
-              {selectedFeed.ai_summary}
-            </p>
-          </div>
-          <div>
-            <span className="text-[10px] font-bold text-zinc-400 uppercase block mb-2">
-              Topics
-            </span>
-            <div className="flex flex-wrap gap-2">
-              {selectedFeed.ai_topics?.map((topic) => (
-                <span
-                  key={topic}
-                  className="text-[9px] px-1.5 py-0.5 bg-zinc-50 border border-zinc-100 rounded text-zinc-400"
-                >
-                  {topic}
-                </span>
-              ))}
+      <div className="space-y-12 pt-12 border-t border-zinc-100">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-12">
+          <div className="space-y-8">
+            <div>
+              <span className="text-[9px] font-black text-zinc-400 uppercase tracking-widest block mb-2">
+                Sentiment
+              </span>
+              <div className="text-sm font-bold text-zinc-900 capitalize border-l-2 border-zinc-900 pl-3">
+                {selectedFeed.ai_sentiment}
+              </div>
+            </div>
+
+            <div>
+              <span className="text-[9px] font-black text-zinc-400 uppercase tracking-widest block mb-3">
+                Topics
+              </span>
+              <div className="flex flex-wrap gap-2">
+                {selectedFeed.ai_topics?.map((topic) => (
+                  <span
+                    key={topic}
+                    className="text-[9px] px-2 py-1 bg-zinc-50 border border-zinc-100 rounded text-zinc-600 font-bold uppercase"
+                  >
+                    {topic}
+                  </span>
+                ))}
+              </div>
             </div>
           </div>
-          <div className="flex justify-between items-baseline border-t border-zinc-50 pt-2">
-            <span className="text-[10px] font-bold text-zinc-400 uppercase">
-              Score
-            </span>
-            <span className="text-xs text-zinc-600">{selectedFeed.score}</span>
+
+          <div className="space-y-8">
+            <div>
+              <span className="text-[9px] font-black text-zinc-400 uppercase tracking-widest block mb-2">
+                Summary
+              </span>
+              <p className="text-xs text-zinc-500 leading-relaxed italic">
+                {selectedFeed.ai_summary}
+              </p>
+            </div>
+
+            <div>
+              <span className="text-[9px] font-black text-zinc-400 uppercase tracking-widest block mb-2">
+                Signal Strength
+              </span>
+              <div className="text-2xl font-black text-zinc-900">
+                {Math.round(
+                  selectedFeed.total_score || selectedFeed.score || 0,
+                )}
+              </div>
+            </div>
           </div>
         </div>
       </div>

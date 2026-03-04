@@ -1,10 +1,12 @@
-from ingestion import fetch_hackernews, fetch_producthunt, fetch_reddit
-from database import save_hacker_news, save_product_hunt, connect
+from ingestion import (
+    fetch_reddit,
+)  # Still might be used if run_pipeline is expanded, but let's keep it minimal for now if they really are unused
+from database import connect
 from database.models.signal import Signal
 from processing.gemini_client import process_signals_batch
-from processing.trend_scoring import calculate_trend_score
+from processing.trend_scoring import calculate_intelligence_score
 import logging
-from datetime import datetime, timedelta
+from datetime import datetime, timedelta, timezone
 
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
@@ -36,20 +38,33 @@ def run_pipeline():
                 sig.ai_topics = result.get("topics", [])
                 sig.cluster_id = result.get("cluster_id")
 
-                # Calculate initial trend score
-                sig.trend_score = calculate_trend_score(sig.score or 0, sig.time)
+                # Calculate sophisticated total intelligence score
+                sig.total_score = calculate_intelligence_score(
+                    score=sig.score or 0,
+                    published_at=sig.time,
+                    sentiment_score=sig.sentiment_score or 0.0,
+                    platform=sig.platform,
+                )
                 sig.save()
 
-        logger.info("Completed AI processing and initial scoring")
+        logger.info("Completed AI processing and multi-factor scoring")
 
     # 2. Re-score recent signals (last 48 hours) to account for time decay
-    recent_signals = Signal.objects(time__gte=datetime.utcnow() - timedelta(hours=48))
-    logger.info(f"Updating scores for {len(recent_signals)} recent signals")
+    now_utc = datetime.now(timezone.utc).replace(
+        tzinfo=None
+    )  # Keep parity with naive UTC stored in MongoEngine
+    recent_signals = Signal.objects(time__gte=now_utc - timedelta(hours=48))
+    logger.info(f"Updating intelligence scores for {len(recent_signals)} signals")
     for sig in recent_signals:
-        sig.trend_score = calculate_trend_score(sig.score or 0, sig.time)
+        sig.total_score = calculate_intelligence_score(
+            score=sig.score or 0,
+            published_at=sig.time,
+            sentiment_score=sig.sentiment_score or 0.0,
+            platform=sig.platform,
+        )
         sig.save()
 
-    logger.info("Pipeline completed")
+    logger.info("Intelligence pipeline completed")
 
 
 if __name__ == "__main__":
