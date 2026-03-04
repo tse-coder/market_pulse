@@ -6,4 +6,4 @@ motor>=3.3.0
 mongoengine
 requests>=2.31.0
 google-genai
-
+numpy

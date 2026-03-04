@@ -1,6 +1,5 @@
 import requests
 import logging
-import pprint
 
 logger = logging.getLogger(__name__)
 

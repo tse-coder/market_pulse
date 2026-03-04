@@ -1,6 +1,6 @@
 import logging
 import requests
-import os
+from config import settings
 
 logger = logging.getLogger(__name__)
 
@@ -13,13 +13,11 @@ def fetch_latest_posts(limit=20):
     """
     logger.info(f"Fetching {limit} latest posts from Product Hunt...")
 
-    # token = os.getenv("PRODUCT_HUNT_TOKEN")
-    token = ""
-    if not token:
-        raise ValueError("PRODUCT_HUNT_TOKEN environment variable not set")
+    if not settings.PH_TOKEN:
+        raise ValueError("PH_TOKEN environment variable not set")
 
     headers = {
-        "Authorization": f"Bearer {token}",
+        "Authorization": f"Bearer {settings.PH_TOKEN}",
         "Content-Type": "application/json",
         "user-agent": "market-pulse"
     }

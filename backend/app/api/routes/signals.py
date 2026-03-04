@@ -32,6 +32,7 @@ async def get_signals(page: int = Query(1, ge=1), limit: int = Query(25, ge=1, l
                 "platform": doc.get("platform"),
                 "title": doc.get("title"),
                 "content": doc.get("content"),
+                "type": doc.get("type", "discussion"),
                 "score": doc.get("score"),
                 "total_score": doc.get("total_score"),
                 "trend_score": doc.get("trend_score"),
@@ -40,8 +41,12 @@ async def get_signals(page: int = Query(1, ge=1), limit: int = Query(25, ge=1, l
                 "ai_sentiment": doc.get("ai_sentiment"),
                 "ai_topics": doc.get("ai_topics"),
                 "cluster_id": doc.get("cluster_id"),
+                "tags": doc.get("tags", []),
                 "metadata": doc.get("metadata"),
                 "time": doc.get("time").isoformat() if doc.get("time") else None,
+                "updated_at": doc.get("updated_at").isoformat()
+                if doc.get("updated_at")
+                else None,
                 "url": doc.get("url"),
             }
         )

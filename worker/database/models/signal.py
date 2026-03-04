@@ -1,3 +1,5 @@
+from datetime import datetime
+
 # define a mongodb model for the signal
 from mongoengine import (
     Document,
@@ -12,7 +14,8 @@ from mongoengine import (
 
 class Signal(Document):
     platform = StringField(required=True)
-    external_id = StringField(required=True)
+    external_id = StringField(required=True, unique=True)
+    type = StringField(choices=["startup", "discussion"], default="discussion")
     title = StringField()
     content = StringField(required=True)
     score = IntField()
@@ -20,9 +23,15 @@ class Signal(Document):
     url = StringField()
     sentiment_score = FloatField()
     ai_summary = StringField()
-    ai_sentiment = StringField()  # e.g., "Positive", "Negative", "Neutral"
+    ai_sentiment = StringField()
     ai_topics = ListField(StringField())
     metadata = DictField()
-    trend_score = FloatField(default=0.0)
     total_score = FloatField(default=0.0)
+    trend_score = FloatField(default=0.0)  # Legacy support
+    embedding_vector = ListField(FloatField())
     cluster_id = StringField()
+    tags = ListField(StringField())
+    created_at = DateTimeField(default=datetime.utcnow)
+    updated_at = DateTimeField(default=datetime.utcnow)
+
+    meta = {"indexes": ["external_id", "cluster_id", "platform", "time"]}
