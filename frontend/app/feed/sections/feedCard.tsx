@@ -67,21 +67,8 @@ function FeedCard({ feed, selectedFeedId, setSelectedFeedId }: FeedCardProps) {
           </span>
         </div>
 
-        <div className="flex items-center gap-1 text-zinc-400">
-          <svg
-            className="w-3 h-3"
-            fill="none"
-            viewBox="0 0 24 24"
-            stroke="currentColor"
-          >
-            <path
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              strokeWidth={2}
-              d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6"
-            />
-          </svg>
-          <span className="text-[9px] font-mono">
+        <div className="flex items-center gap-1.5 text-zinc-400">
+          <span className="text-[10px] font-black tracking-tight">
             {Math.round(feed.total_score || feed.score || 0)}
           </span>
         </div>

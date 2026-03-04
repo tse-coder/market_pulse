@@ -6,7 +6,7 @@ export default function Home() {
       {/* Subtle top border decorative element */}
       <div className="absolute top-0 left-0 right-0 h-1.5 bg-zinc-900" />
 
-      Background Effects
+      {/* Background Effects */}
       <div className="absolute inset-0 bg-[url('https://grainy-gradients.vercel.app/noise.svg')] opacity-[0.03] brightness-0 pointer-events-none" />
       <div className="absolute inset-0 bg-[linear-gradient(to_right,#00000008_1px,transparent_1px),linear-gradient(to_bottom,#00000008_1px,transparent_1px)] bg-[size:60px_60px] pointer-events-none" />
       <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[1000px] h-[1000px] bg-blue-500/[0.03] rounded-full blur-[120px] pointer-events-none" />

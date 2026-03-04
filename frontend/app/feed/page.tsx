@@ -119,26 +119,22 @@ export default function FeedPage() {
   return (
     <div className="flex h-screen bg-white text-zinc-900 font-sans overflow-hidden">
       {/* List Column */}
-      <aside className="w-[400px] flex flex-col border-r border-zinc-100 bg-white">
-        <div className="p-6 border-b border-zinc-100 flex items-center justify-between">
-          <h1 className="text-sm font-black uppercase tracking-[0.2em]">
-            Signals
+      <aside className="w-[400px] flex flex-col border-r border-zinc-100 bg-white shadow-sm">
+        <div className="p-6 border-b border-zinc-50 flex items-center gap-4">
+          <img
+            src="/market_pulse.png"
+            alt="Market Pulse"
+            className="w-8 h-8 rounded-lg opacity-80"
+          />
+          <h1 className="text-sm font-black uppercase italic tracking-[0.2em] text-zinc-900">
+            pulse
           </h1>
-          <div className="flex items-center gap-1.5 px-2 py-0.5 rounded-full border border-zinc-200">
-            <div className="w-1.5 h-1.5 rounded-full bg-blue-500" />
-            <span className="text-[9px] font-bold text-zinc-400 uppercase tracking-widest">
-              Live
-            </span>
-          </div>
         </div>
 
         <div className="flex-1 overflow-y-auto scrollbar-minimal">
           {loading && feeds.length === 0 && (
-            <div className="py-20 flex flex-col items-center justify-center gap-3">
-              <div className="w-4 h-4 border-2 border-zinc-200 border-t-zinc-900 rounded-full animate-spin" />
-              <div className="text-zinc-400 text-[10px] uppercase tracking-widest font-bold">
-                Resyncing...
-              </div>
+            <div className="py-20 flex flex-col items-center justify-center">
+              <div className="w-5 h-5 border-2 border-zinc-100 border-t-zinc-900 rounded-full animate-spin" />
             </div>
           )}
 
