@@ -31,3 +31,19 @@ export async function fetchSignalsPage(page = 1, limit = 25) {
   }
   return res.json();
 }
+
+export async function fetchClusters(page = 1, limit = 25) {
+  const res = await fetch(`${API_URL}/clusters/?page=${page}&limit=${limit}`);
+  if (!res.ok) {
+    throw new Error("Failed to fetch clusters");
+  }
+  return res.json();
+}
+
+export async function fetchClusterSignals(clusterId: string) {
+  const res = await fetch(`${API_URL}/clusters/${clusterId}/signals`);
+  if (!res.ok) {
+    throw new Error("Failed to fetch cluster signals");
+  }
+  return res.json();
+}

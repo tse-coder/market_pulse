@@ -1,7 +1,7 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from app.core.config import settings
-from app.api.routes import health, signals, trends
+from app.api.routes import health, signals, trends, clusters
 import logging
 from app.db.database import connect_to_mongo, close_mongo_connection
 
@@ -22,6 +22,7 @@ app.add_middleware(
 app.include_router(health.router, prefix="/api/health", tags=["health"])
 app.include_router(signals.router, prefix="/api/signals", tags=["signals"])
 app.include_router(trends.router, prefix="/api/trends", tags=["trends"])
+app.include_router(clusters.router, prefix="/api/clusters", tags=["clusters"])
 
 
 @app.on_event("startup")

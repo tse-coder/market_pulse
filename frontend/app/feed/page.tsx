@@ -1,63 +1,46 @@
 "use client";
 import { useState, useEffect, useRef } from "react";
-import { fetchSignalsPage } from "@/lib/api";
+import { fetchClusters } from "@/lib/api";
 import DetailSection from "./sections/detail";
 import FeedCard from "./sections/feedCard";
 
-type FeedItem = {
+export type ClusterItem = {
   id: string;
-  source: "hacker_news" | "product_hunt" | "reddit";
-  feedTitle?: string;
-  time?: string;
-  content: string;
-  score?: number;
-  total_score?: number;
-  trend_score?: number;
-  sentiment_score?: number;
-  ai_summary?: string;
-  ai_sentiment?: string;
-  ai_topics?: string[];
-  metadata?: any;
-  tags?: string[];
-  link?: { text: string; url: string };
+  name: string;
+  description?: string;
+  total_signals: number;
+  total_startups: number;
+  total_discussions: number;
+  avg_sentiment: number;
+  momentum_score: number;
+  pain_score: number;
+  opportunity_score: number;
+  primary_tags: string[];
+  created_at?: string;
 };
 
 export default function FeedPage() {
-  const [selectedFeedId, setSelectedFeedId] = useState<string | null>(null);
-  const [feeds, setFeeds] = useState<FeedItem[]>([]);
+  const [selectedClusterId, setSelectedClusterId] = useState<string | null>(
+    null,
+  );
+  const [clusters, setClusters] = useState<ClusterItem[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
   const [page, setPage] = useState<number>(1);
   const [hasMore, setHasMore] = useState<boolean>(true);
   const [isFetchingMore, setIsFetchingMore] = useState<boolean>(false);
   const loaderRef = useRef<HTMLDivElement | null>(null);
-  const selectedFeed = feeds.find((f) => f.id === selectedFeedId);
+  const selectedCluster = clusters.find((c) => c.id === selectedClusterId);
   const LIMIT = 25;
 
   useEffect(() => {
     let mounted = true;
     setLoading(true);
 
-    fetchSignalsPage(1, LIMIT)
+    fetchClusters(1, LIMIT)
       .then((data) => {
         if (!mounted) return;
-        const mapped: FeedItem[] = data.map((s: any) => ({
-          id: s.id,
-          source: s.platform as "hacker_news" | "product_hunt" | "reddit",
-          feedTitle: s.title,
-          content: s.content,
-          score: s.score,
-          total_score: s.total_score,
-          trend_score: s.trend_score,
-          sentiment_score: s.sentiment_score,
-          ai_summary: s.ai_summary,
-          ai_sentiment: s.ai_sentiment,
-          ai_topics: s.ai_topics,
-          metadata: s.metadata,
-          time: s.time,
-          link: s.url ? { text: s.url, url: s.url } : undefined,
-        }));
-        setFeeds(mapped);
+        setClusters(data);
         setHasMore(data.length === LIMIT);
         setPage(1);
         setLoading(false);
@@ -83,25 +66,9 @@ export default function FeedPage() {
         if (entry.isIntersecting && !isFetchingMore && hasMore && !loading) {
           const nextPage = page + 1;
           setIsFetchingMore(true);
-          fetchSignalsPage(nextPage, LIMIT)
+          fetchClusters(nextPage, LIMIT)
             .then((data) => {
-              const mapped: FeedItem[] = data.map((s: any) => ({
-                id: s.id,
-                source: s.platform as "hacker_news" | "product_hunt" | "reddit",
-                feedTitle: s.title,
-                content: s.content,
-                score: s.score,
-                total_score: s.total_score,
-                trend_score: s.trend_score,
-                sentiment_score: s.sentiment_score,
-                ai_summary: s.ai_summary,
-                ai_sentiment: s.ai_sentiment,
-                ai_topics: s.ai_topics,
-                metadata: s.metadata,
-                time: s.time,
-                link: s.url ? { text: s.url, url: s.url } : undefined,
-              }));
-              setFeeds((prev) => [...prev, ...mapped]);
+              setClusters((prev) => [...prev, ...data]);
               setHasMore(data.length === LIMIT);
               setPage(nextPage);
             })
@@ -127,12 +94,12 @@ export default function FeedPage() {
             className="w-8 h-8 rounded-lg opacity-80"
           />
           <h1 className="text-sm font-black uppercase italic tracking-[0.2em] text-zinc-900">
-            pulse
+            pulse clusters
           </h1>
         </div>
 
         <div className="flex-1 overflow-y-auto scrollbar-minimal">
-          {loading && feeds.length === 0 && (
+          {loading && clusters.length === 0 && (
             <div className="py-20 flex flex-col items-center justify-center">
               <div className="w-5 h-5 border-2 border-zinc-100 border-t-zinc-900 rounded-full animate-spin" />
             </div>
@@ -145,12 +112,12 @@ export default function FeedPage() {
           )}
 
           <div className="divide-y divide-zinc-50">
-            {feeds.map((feed) => (
+            {clusters.map((cluster) => (
               <FeedCard
-                key={feed.id}
-                feed={feed}
-                selectedFeedId={selectedFeedId}
-                setSelectedFeedId={setSelectedFeedId}
+                key={cluster.id}
+                cluster={cluster}
+                selectedClusterId={selectedClusterId}
+                setSelectedClusterId={setSelectedClusterId}
               />
             ))}
           </div>
@@ -158,7 +125,7 @@ export default function FeedPage() {
           {hasMore && (
             <div ref={loaderRef} className="py-12 text-center">
               <div className="text-[9px] font-bold text-zinc-300 uppercase tracking-[0.3em]">
-                {isFetchingMore ? "• • •" : "End of Feed"}
+                {isFetchingMore ? "• • •" : "End of Clusters"}
               </div>
             </div>
           )}
@@ -167,35 +134,34 @@ export default function FeedPage() {
 
       {/* Detail Column */}
       <main className="flex-1 overflow-y-auto bg-white">
-        {selectedFeed ? (
+        {selectedCluster ? (
           <DetailSection
-            selectedFeed={selectedFeed}
-            setSelectedFeedId={setSelectedFeedId}
+            selectedCluster={selectedCluster}
+            clearSelection={() => setSelectedClusterId(null)}
           />
         ) : (
-          <div className="h-full flex flex-col items-center justify-center p-12 text-center space-y-4">
-            <div className="w-16 h-16 rounded-full bg-zinc-50 border border-zinc-100 flex items-center justify-center">
-              <svg
-                className="w-6 h-6 text-zinc-300"
-                fill="none"
-                viewBox="0 0 24 24"
-                stroke="currentColor"
-              >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
+          <div className="h-full flex flex-col items-center justify-center p-12 text-center space-y-6">
+            <div className="relative">
+              <div className="absolute inset-0 bg-blue-50/50 rounded-full blur-2xl animate-pulse" />
+              <div className="relative w-20 h-20 rounded-2xl bg-white border border-zinc-100 shadow-[0_10px_30px_rgba(0,0,0,0.03)] flex items-center justify-center">
+                <svg
+                  className="w-10 h-10 text-zinc-200"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                  stroke="currentColor"
                   strokeWidth={1}
-                  d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
-                />
-              </svg>
+                >
+                  <path d="M4.5 12h15m0 0l-6.75-6.75M19.5 12l-6.75 6.75" />
+                </svg>
+              </div>
             </div>
-            <div className="max-w-xs space-y-1">
-              <h2 className="text-sm font-bold text-zinc-900 uppercase tracking-tight">
-                Intelligence Selected Needed
+            <div className="max-w-xs space-y-2">
+              <h2 className="text-xs font-black text-zinc-900 uppercase tracking-widest">
+                Cluster Intelligence
               </h2>
-              <p className="text-xs text-zinc-400">
-                Choose a signal from the left pane to analyze its market impact
-                and sentiment pulse.
+              <p className="text-[11px] text-zinc-400 leading-relaxed font-medium">
+                Select a market sector to reveal deep intelligence, upcoming
+                startups, and social discussions mapping that demand space.
               </p>
             </div>
           </div>
