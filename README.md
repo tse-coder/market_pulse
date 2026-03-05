@@ -24,14 +24,15 @@ Market Pulse is an AI-powered market demand scanner. It ingests social platform 
                       |  (Scheduler)  |
                       +-------+-------+
                               |
-                    [Reddit / Twitter / AI ]
+           [Hacker News / Product Hunt / Reddit / Gemini AI]
 ```
 
-## 🛠 Tech Stack
+## Tech Stack
 
 - **Frontend:** Next.js (App Router), Tailwind CSS
 - **Backend:** FastAPI, Pydantic, Motor (MongoDB async)
-- **Worker:** Python, Schedule (moving to Celery later)
+- **Worker:** Python, Google Gemini SDK
+- **AI/LLM:** Google Gemini (Generative AI & Semantic Embeddings)
 - **Database:** MongoDB
 - **Infrastructure:** Docker, Docker Compose
 
@@ -41,14 +42,14 @@ Market Pulse is an AI-powered market demand scanner. It ingests social platform 
 market-pulse/
 ├── frontend/                # Next.js app
 ├── backend/                 # FastAPI API layer
-├── worker/                  # Background jobs (AI + ingestion)
+├── worker/                  # Background jobs (Gemini AI + ingestion)
 ├── infrastructure/          # Deployment configs
 ├── docker-compose.yml       # Composes all services
 ├── .env.example             # Shared environment vars
 └── README.md                # Project documentation
 ```
 
-## 💻 Setup Instructions
+## Setup Instructions
 
 ### Pre-requisites
 
@@ -59,7 +60,7 @@ market-pulse/
 ### Docker Flow
 
 1. Clone the project.
-2. Copy `.env.example` to `.env` and fill the variables.
+2. Copy `.env.example` to `.env` and fill the variables (especially `GOOGLE_API_KEY` and `PH_TOKEN`).
    ```bash
    cp .env.example .env
    ```
@@ -88,6 +89,8 @@ uvicorn app.main:app --reload
 
 ```bash
 cd worker
+python -m venv venv
+source venv/bin/activate
 pip install -r requirements.txt
 python scheduler.py
 ```
@@ -100,10 +103,12 @@ npm install
 npm run dev
 ```
 
-## 🔮 Future Roadmap
+## Future Roadmap
 
+- [x] Integrate Hacker News and Product Hunt ingestion
+- [x] Implement semantic embeddings via Google Gemini API
 - [ ] Connect Reddit API with PRAW
-- [ ] Implement actual vector embeddings via OpenAI API
 - [ ] Add vector database (e.g. Qdrant or Pinecone) for similarity search
 - [ ] Switch Worker simple scheduler to a robust queue system (Celery/RabbitMQ)
 - [ ] Implement user authentication and personalized dashboards
+- [ ] Add support for X (Twitter), LinkedIn, and Telegram scanning
