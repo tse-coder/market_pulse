@@ -1,4 +1,5 @@
 import Link from "next/link";
+import BrandAlignmentBar from "./components/BrandAlignmentBar";
 
 export default function Home() {
   return (
@@ -33,6 +34,55 @@ export default function Home() {
           src="/brand-icons/hacker-news/icon-primary.jpeg"
           alt="Hacker News"
           className="w-10 h-10 rounded-lg"
+        />
+      </div>
+
+      {/* New Floating Icons */}
+      <div className="absolute bottom-[35%] right-[8%] w-20 h-20 bg-white shadow-[0_20px_50px_rgba(0,0,0,0.08)] rounded-3xl border border-zinc-100 flex items-center justify-center animate-float-delayed pointer-events-none md:flex hidden">
+        <img
+          src="/brand-icons/discord/icon.png"
+          alt="Discord"
+          className="w-12 h-12 rounded-xl"
+        />
+      </div>
+
+      <div className="absolute top-[55%] left-[5%] w-20 h-20 bg-white shadow-[0_20px_50px_rgba(0,0,0,0.08)] rounded-3xl border border-zinc-100 flex items-center justify-center animate-float pointer-events-none md:flex hidden">
+        <img
+          src="/brand-icons/github/icon.png"
+          alt="GitHub"
+          className="w-12 h-12"
+        />
+      </div>
+
+      <div className="absolute bottom-[18%] right-[22%] w-16 h-16 bg-white shadow-[0_20px_50px_rgba(0,0,0,0.08)] rounded-2xl border border-zinc-100 flex items-center justify-center animate-float-reverse pointer-events-none md:flex hidden">
+        <img
+          src="/brand-icons/LinkedIn/icon.png"
+          alt="LinkedIn"
+          className="w-10 h-10 rounded-lg"
+        />
+      </div>
+
+      <div className="absolute top-[40%] right-[5%] w-16 h-16 bg-white shadow-[0_20px_50px_rgba(0,0,0,0.08)] rounded-2xl border border-zinc-100 flex items-center justify-center animate-float pointer-events-none md:flex hidden">
+        <img
+          src="/brand-icons/x/icon-no-bg.png"
+          alt="X"
+          className="w-10 h-10"
+        />
+      </div>
+
+      <div className="absolute bottom-[45%] left-[12%] w-14 h-14 bg-white shadow-[0_20px_50px_rgba(0,0,0,0.05)] rounded-2xl border border-zinc-100 flex items-center justify-center animate-float-delayed pointer-events-none md:flex hidden">
+        <img
+          src="/brand-icons/telegram/Telegram_Symbol_4.png"
+          alt="Telegram"
+          className="w-8 h-8"
+        />
+      </div>
+
+      <div className="absolute top-[65%] right-[10%] w-14 h-14 bg-white shadow-[0_20px_50px_rgba(0,0,0,0.05)] rounded-2xl border border-zinc-100 flex items-center justify-center animate-float-reverse pointer-events-none md:flex hidden">
+        <img
+          src="/brand-icons/youtube/icon.png"
+          alt="YouTube"
+          className="w-8 h-8 rounded-md"
         />
       </div>
 
@@ -80,38 +130,7 @@ export default function Home() {
       </main>
 
       {/* Brand alignment bar */}
-      <div className="absolute bottom-12 left-0 right-0 flex justify-center items-center gap-12 z-10 opacity-40">
-        <div className="flex items-center gap-2 grayscale contrast-150">
-          <img
-            src="/brand-icons/reddit/icon-primary.jpeg"
-            alt="Reddit"
-            className="w-4 h-4 rounded-sm"
-          />
-          <span className="text-[10px] font-black uppercase tracking-widest">
-            Reddit
-          </span>
-        </div>
-        <div className="flex items-center gap-2 grayscale contrast-150">
-          <img
-            src="/brand-icons/hacker-news/icon-primary.jpeg"
-            alt="Hacker News"
-            className="w-4 h-4 rounded-sm"
-          />
-          <span className="text-[10px] font-black uppercase tracking-widest">
-            Hacker News
-          </span>
-        </div>
-        <div className="flex items-center gap-2 grayscale contrast-150">
-          <img
-            src="/brand-icons/product-hunt/icon-primary.png"
-            alt="Product Hunt"
-            className="w-4 h-4 rounded-sm"
-          />
-          <span className="text-[10px] font-black uppercase tracking-widest">
-            Product Hunt
-          </span>
-        </div>
-      </div>
+      {/* <BrandAlignmentBar /> */}
     </div>
   );
 }
