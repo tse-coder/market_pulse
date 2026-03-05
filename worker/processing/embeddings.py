@@ -20,7 +20,6 @@ def generate_embeddings(
     try:
         client = genai.Client(api_key=settings.GOOGLE_API_KEY)
 
-        # Ensure we don't send too many to avoid rate limits, though 004 is robust
         # Gemini embedding batch size limit is usually high, but we process in pipeline batches
         response = client.models.embed_content(
             model=model,

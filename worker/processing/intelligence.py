@@ -34,7 +34,11 @@ def process_ai_intelligence(limit: int = 40):
         if sig:
             sig.ai_summary = result.get("summary")
             sig.ai_sentiment = result.get("sentiment")
-            sig.ai_topics = result.get("topics", [])
+
+            # Map sentiment string to float score
+            sentiment_map = {"Positive": 1.0, "Neutral": 0.0, "Negative": -1.0}
+            sig.sentiment_score = sentiment_map.get(sig.ai_sentiment, 0.0)
+
             sig.updated_at = datetime.utcnow()
             sig.save()
 
@@ -61,12 +65,15 @@ def process_semantic_clustering(limit: int = 20):
                 f"Signal {sig.external_id} matched cluster {cluster_id} (sim: {similarity:.2f})"
             )
             sig.cluster_id = cluster_id
-            update_cluster_centroid(cluster_id, normalized_v)
+            update_cluster_centroid(cluster_id, sig)
         else:
             new_cluster = Cluster(
                 name=sig.title[:50] if sig.title else "New Intelligence Sector",
                 embedding_centroid=normalized_v,
                 primary_tags=sig.ai_topics or [],
+                total_signals=1,
+                total_startups=1 if sig.type == "startup" else 0,
+                total_discussions=1 if sig.type == "discussion" else 0,
             ).save()
             sig.cluster_id = str(new_cluster.id)
             logger.info(
@@ -95,3 +102,39 @@ def refresh_intelligence_scores(time_window_hours: int = 48):
             platform=sig.platform,
         )
         sig.save()
+
+
+def refresh_cluster_metrics():
+    """Aggregates signal scores into cluster-level metadata"""
+    clusters = Cluster.objects()
+    logger.info(f"Refreshing metrics for {len(clusters)} clusters")
+
+    for cluster in clusters:
+        signals = Signal.objects(cluster_id=str(cluster.id))
+        if not signals:
+            continue
+
+        # 1. Average Sentiment
+        sentiments = [
+            s.sentiment_score for s in signals if s.sentiment_score is not None
+        ]
+        cluster.avg_sentiment = sum(sentiments) / len(sentiments) if sentiments else 0.0
+
+        # 2. Momentum & Intelligence Score
+        # Cluster intelligence is average of underlying signal total_scores
+        scores = [s.total_score for s in signals if s.total_score > 0]
+        cluster.momentum_score = sum(scores) / len(scores) if scores else 0.0
+
+        # 3. Pain vs Opportunity
+        # High Negative sentiment signals indicate "Pain"
+        pain_signals = signals(sentiment_score__lt=-0.1).count()
+        cluster.pain_score = (pain_signals / len(signals)) * 100
+
+        # Opportunity is high momentum + positive sentiment
+        cluster.opportunity_score = (
+            cluster.momentum_score * (1 + cluster.avg_sentiment)
+        ) / 2
+
+        cluster.updated_at = datetime.utcnow()
+        cluster.save()
+        logger.info(f"Updated metrics for cluster: {cluster.name}")

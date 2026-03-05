@@ -10,6 +10,7 @@ from .intelligence import (
     process_ai_intelligence,
     process_semantic_clustering,
     refresh_intelligence_scores,
+    refresh_cluster_metrics,
 )
 
 __all__ = [
@@ -22,4 +23,5 @@ __all__ = [
     "process_ai_intelligence",
     "process_semantic_clustering",
     "refresh_intelligence_scores",
+    "refresh_cluster_metrics",
 ]

@@ -5,6 +5,7 @@ from processing import (
     process_ai_intelligence,
     process_semantic_clustering,
     refresh_intelligence_scores,
+    refresh_cluster_metrics,
 )
 
 logging.basicConfig(level=logging.INFO)
@@ -32,7 +33,10 @@ def run_pipeline():
     # Time-Decay Score Refresh
     refresh_intelligence_scores(time_window_hours=48)
 
-    logger.info("Intelligence pipeline completed")
+    # Refresh Cluster Aggregate Metrics
+    refresh_cluster_metrics()
+
+    logger.info("pipeline completed")
 
 
 if __name__ == "__main__":

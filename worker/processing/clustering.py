@@ -1,3 +1,4 @@
+from datetime import datetime
 import numpy as np
 from typing import List, Optional, Tuple
 import logging
@@ -25,7 +26,7 @@ def calculate_cosine_similarity(v1: List[float], v2: List[float]) -> float:
 
 
 def find_best_cluster(
-    embedding: List[float], threshold: float = 0.85
+    embedding: List[float], threshold: float = 0.80
 ) -> Tuple[Optional[str], float]:
     """
     Finds the existing cluster that best matches the given embedding.
@@ -53,22 +54,26 @@ def find_best_cluster(
     return None, max_similarity
 
 
-def update_cluster_centroid(
-    cluster_id: str, new_embedding: List[float], alpha: float = 0.1
-):
+def update_cluster_centroid(cluster_id: str, signal, alpha: float = 0.1):
     """
-    Updates the cluster's centroid using a moving average.
-    centroid = (1 - alpha) * centroid + alpha * new_embedding
+    Updates the cluster's centroid and increments signal counters.
     """
     cluster = Cluster.objects(id=cluster_id).first()
-    if not cluster or not cluster.embedding_centroid:
+    if not cluster:
         return
 
-    current_centroid = np.array(cluster.embedding_centroid)
-    new_v = np.array(new_embedding)
+    if cluster.embedding_centroid and signal.embedding_vector:
+        current_centroid = np.array(cluster.embedding_centroid)
+        new_v = np.array(signal.embedding_vector)
+        updated_centroid = (1 - alpha) * current_centroid + alpha * new_v
+        cluster.embedding_centroid = l2_normalize(updated_centroid.tolist())
 
-    updated_centroid = (1 - alpha) * current_centroid + alpha * new_v
-    # Re-normalize to maintain L2 property
-    cluster.embedding_centroid = l2_normalize(updated_centroid.tolist())
+    cluster.total_signals += 1
+    if signal.type == "startup":
+        cluster.total_startups += 1
+    elif signal.type == "discussion":
+        cluster.total_discussions += 1
+
+    cluster.updated_at = datetime.utcnow()
     cluster.save()
-    logger.info(f"Updated centroid for cluster {cluster_id}")
+    logger.info(f"Updated cluster {cluster_id} with signal {signal.external_id}")
