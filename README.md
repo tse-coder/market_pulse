@@ -42,7 +42,7 @@ Market Pulse is an AI-powered market demand scanner. It ingests social platform 
 market-pulse/
 ├── frontend/                # Next.js app
 ├── backend/                 # FastAPI API layer
-├── worker/                  # Background jobs (Gemini AI + ingestion)
+├── worker/                  # Background jobs (Gemini API + ingestion)
 ├── infrastructure/          # Deployment configs
 ├── docker-compose.yml       # Composes all services
 ├── .env.example             # Shared environment vars
