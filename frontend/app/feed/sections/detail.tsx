@@ -1,6 +1,14 @@
-import React, { useState, useEffect } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 import { ClusterItem } from "../page";
 import { fetchClusterSignals } from "@/lib/api";
+import { getMockClusterHistory } from "@/lib/constants/mockClusterGraphData";
+import {
+  ChartContainer,
+  ChartTooltip,
+  ChartTooltipContent,
+  type ChartConfig,
+} from "@/components/ui/chart";
+import { CartesianGrid, Line, LineChart, XAxis } from "recharts";
 
 type Signal = {
   id: string;
@@ -50,17 +58,20 @@ export default function DetailSection({
   const filteredSignals = signals.filter((s) => s.type === activeTab);
 
   const cluster = selectedCluster;
-  const mockHistoryPoints = [
-    { val: 26, label: "W1" },
-    { val: 34, label: "W2" },
-    { val: 41, label: "W3" },
-    { val: 38, label: "W4" },
-    { val: 47, label: "W5" },
-    { val: 56, label: "W6" },
-    { val: 61, label: "W7" },
-    { val: 68, label: "W8" },
-  ];
-  const maxMockValue = Math.max(...mockHistoryPoints.map((point) => point.val));
+  const mockHistoryPoints = useMemo(
+    () => getMockClusterHistory(cluster.id),
+    [cluster.id],
+  );
+  const chartData = useMemo(
+    () => mockHistoryPoints.map((point) => ({ week: point.label, momentum: point.val })),
+    [mockHistoryPoints],
+  );
+  const chartConfig = {
+    momentum: {
+      label: "Momentum",
+      color: "#0f766e",
+    },
+  } satisfies ChartConfig;
 
   return (
     <div className="relative flex h-full flex-col">
@@ -134,31 +145,36 @@ export default function DetailSection({
             </div>
           </div>
 
-          <div className="flex h-32 items-end gap-3 pr-2 sm:pr-4">
-            {mockHistoryPoints.map((p, i) => {
-              const height = (p.val / maxMockValue) * 100;
-              return (
-                <div
-                  key={i}
-                  className="group/bar flex flex-1 flex-col items-center gap-2"
+          <div className="pr-2 sm:pr-4">
+            <div className="relative rounded-2xl border border-zinc-200/80 bg-white/60 p-2">
+              <ChartContainer config={chartConfig} className="h-40 w-full">
+                <LineChart
+                  accessibilityLayer
+                  data={chartData}
+                  margin={{ top: 10, right: 10, left: -12, bottom: 10 }}
                 >
-                  <div
-                    className={`w-full rounded-t-lg transition-all duration-700 ${
-                      i === mockHistoryPoints.length - 1
-                        ? "bg-teal-500 shadow-lg"
-                        : "bg-zinc-300 group-hover/bar:bg-teal-300"
-                    }`}
-                    style={{
-                      height: `${height}%`,
-                      transitionDelay: `${i * 90}ms`,
-                    }}
+                  <CartesianGrid vertical={false} strokeDasharray="3 3" />
+                  <XAxis
+                    dataKey="week"
+                    tickLine={false}
+                    axisLine={false}
+                    tickMargin={10}
                   />
-                  <span className="text-[9px] font-medium uppercase tracking-wide text-zinc-500 opacity-0 transition-opacity group-hover/bar:opacity-100">
-                    {p.label}
-                  </span>
-                </div>
-              );
-            })}
+                  <ChartTooltip
+                    cursor={false}
+                    content={<ChartTooltipContent indicator="line" />}
+                  />
+                  <Line
+                    dataKey="momentum"
+                    type="linear"
+                    stroke="var(--color-momentum)"
+                    strokeWidth={3}
+                    dot={{ r: 3, fill: "var(--color-momentum)", strokeWidth: 0 }}
+                    activeDot={{ r: 5, fill: "var(--color-momentum)", strokeWidth: 0 }}
+                  />
+                </LineChart>
+              </ChartContainer>
+            </div>
           </div>
         </div>
 

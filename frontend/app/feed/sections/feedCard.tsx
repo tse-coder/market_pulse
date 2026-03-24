@@ -23,9 +23,6 @@ function FeedCard({
           : "border-zinc-200/80 bg-white/75 hover:border-zinc-300 hover:bg-white"
       }`}
     >
-      {isSelected && (
-        <div className="absolute right-3 top-3 h-2.5 w-2.5 rounded-full bg-teal-500" />
-      )}
 
       <div className="mb-2 flex items-start justify-between gap-4">
         <h3
