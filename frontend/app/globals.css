@@ -2,22 +2,41 @@
 @plugin "@tailwindcss/typography";
 
 :root {
-  --background: #fdfdfd;
-  --foreground: #171717;
+  --background: #f6f4ee;
+  --foreground: #18181b;
+  --surface: #fffdf8;
+  --surface-strong: #f3efe3;
+  --line: #d7d0bf;
+  --accent: #0f766e;
+  --accent-soft: #ccfbf1;
 }
 
 @theme inline {
   --color-background: var(--background);
   --color-foreground: var(--foreground);
+  --color-surface: var(--surface);
+  --color-surface-strong: var(--surface-strong);
+  --color-line: var(--line);
+  --color-accent: var(--accent);
+  --color-accent-soft: var(--accent-soft);
   --font-sans: var(--font-geist-sans);
   --font-mono: var(--font-geist-mono);
+  --font-display: var(--font-space-grotesk);
 }
 
 body {
   background: var(--background);
   color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  font-family: var(--font-geist-sans), "Segoe UI", sans-serif;
+  background-image:
+    radial-gradient(circle at 15% 10%, rgba(15, 118, 110, 0.12), transparent 35%),
+    radial-gradient(circle at 85% 0%, rgba(217, 119, 6, 0.1), transparent 30%),
+    linear-gradient(180deg, #f6f4ee 0%, #f3f0e6 100%);
   @apply antialiased;
+}
+
+::selection {
+  background: rgba(15, 118, 110, 0.2);
 }
 
 @layer utilities {
@@ -28,7 +47,23 @@ body {
     background: transparent;
   }
   .scrollbar-minimal::-webkit-scrollbar-thumb {
-    @apply bg-zinc-200 rounded-full hover:bg-zinc-300 transition-colors;
+    @apply rounded-full bg-zinc-300/70 transition-colors hover:bg-zinc-500/40;
+  }
+
+  .glass-panel {
+    background: color-mix(in srgb, var(--surface) 92%, white 8%);
+    border: 1px solid color-mix(in srgb, var(--line) 60%, transparent 40%);
+    box-shadow:
+      0 15px 35px rgba(24, 24, 27, 0.05),
+      inset 0 1px 0 rgba(255, 255, 255, 0.65);
+    backdrop-filter: blur(12px);
+  }
+
+  .hero-grid {
+    background-image:
+      linear-gradient(to right, rgba(24, 24, 27, 0.06) 1px, transparent 1px),
+      linear-gradient(to bottom, rgba(24, 24, 27, 0.06) 1px, transparent 1px);
+    background-size: 52px 52px;
   }
 
   @keyframes float {
@@ -51,6 +86,40 @@ body {
     }
   }
 
+  @keyframes fade-up {
+    from {
+      opacity: 0;
+      transform: translateY(24px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+
+  @keyframes reveal {
+    from {
+      transform: scaleX(0);
+      transform-origin: left;
+      opacity: 0;
+    }
+    to {
+      transform: scaleX(1);
+      transform-origin: left;
+      opacity: 1;
+    }
+  }
+
+  @keyframes drift {
+    0%,
+    100% {
+      transform: translate3d(0, 0, 0);
+    }
+    50% {
+      transform: translate3d(0, -12px, 0);
+    }
+  }
+
   .animate-float {
     animation: float 6s ease-in-out infinite;
   }
@@ -62,5 +131,17 @@ body {
 
   .animate-float-reverse {
     animation: float-reverse 7s ease-in-out infinite;
+  }
+
+  .animate-fade-up {
+    animation: fade-up 0.7s cubic-bezier(0.22, 1, 0.36, 1) both;
+  }
+
+  .animate-reveal {
+    animation: reveal 0.8s ease both;
+  }
+
+  .animate-drift {
+    animation: drift 7s ease-in-out infinite;
   }
 }
