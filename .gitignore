@@ -6,12 +6,12 @@ frontend/.env.local
 # Python
 backend/__pycache__/
 backend/.env
-backend/venv/
+backend/backend-env/
 
 # Worker
 worker/__pycache__/
 worker/.env
-worker/venv/
+worker/worker-env/
 
 *__pycache__*
 

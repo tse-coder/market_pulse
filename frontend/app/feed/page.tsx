@@ -35,7 +35,6 @@ export default function FeedPage() {
 
   useEffect(() => {
     let mounted = true;
-    setLoading(true);
 
     fetchClusters(1, LIMIT)
       .then((data) => {
@@ -81,92 +80,108 @@ export default function FeedPage() {
 
     observer.observe(node);
     return () => observer.disconnect();
-  }, [loaderRef.current, page, isFetchingMore, hasMore, loading]);
+  }, [page, isFetchingMore, hasMore, loading]);
 
   return (
-    <div className="flex h-screen bg-white text-zinc-900 font-sans overflow-hidden">
-      {/* List Column */}
-      <aside className="w-[400px] flex flex-col border-r border-zinc-100 bg-white shadow-sm">
-        <div className="p-6 border-b border-zinc-50 flex items-center gap-4">
+    <div className="flex h-[100svh] max-h-[100svh] flex-col overflow-hidden border-zinc-200/70 bg-white/45 backdrop-blur-sm">
+      <header className="flex items-center justify-between border-b border-zinc-200/70 px-4 py-3 sm:px-6">
+        <div className="flex items-center gap-3">
           <img
             src="/market_pulse.png"
             alt="Market Pulse"
-            className="w-8 h-8 rounded-lg opacity-80"
+            className="h-9 w-9 rounded-lg border border-zinc-200/80 bg-white p-1"
           />
-          <h1 className="text-sm font-black uppercase italic tracking-[0.2em] text-zinc-900">
-            pulse clusters
-          </h1>
-        </div>
-
-        <div className="flex-1 overflow-y-auto scrollbar-minimal">
-          {loading && clusters.length === 0 && (
-            <div className="py-20 flex flex-col items-center justify-center">
-              <div className="w-5 h-5 border-2 border-zinc-100 border-t-zinc-900 rounded-full animate-spin" />
-            </div>
-          )}
-
-          {error && (
-            <div className="p-6 text-red-600 text-[10px] font-bold bg-red-50 border-y border-red-100">
-              {error}
-            </div>
-          )}
-
-          <div className="divide-y divide-zinc-50">
-            {clusters.map((cluster) => (
-              <FeedCard
-                key={cluster.id}
-                cluster={cluster}
-                selectedClusterId={selectedClusterId}
-                setSelectedClusterId={setSelectedClusterId}
-              />
-            ))}
+          <div>
+            <p className="font-display text-sm font-semibold text-zinc-900">
+              Market Pulse Feed
+            </p>
+            <p className="text-[10px] uppercase tracking-[0.2em] text-zinc-500">
+              Live Opportunity Clusters
+            </p>
           </div>
-
-          {hasMore && (
-            <div ref={loaderRef} className="py-12 text-center">
-              <div className="text-[9px] font-bold text-zinc-300 uppercase tracking-[0.3em]">
-                {isFetchingMore ? "• • •" : "End of Clusters"}
-              </div>
-            </div>
-          )}
         </div>
-      </aside>
+        <span className="rounded-full bg-teal-50 px-3 py-1 text-[10px] font-semibold uppercase tracking-[0.18em] text-teal-700">
+          realtime
+        </span>
+      </header>
 
-      {/* Detail Column */}
-      <main className="flex-1 overflow-y-auto bg-white">
-        {selectedCluster ? (
-          <DetailSection
-            selectedCluster={selectedCluster}
-            clearSelection={() => setSelectedClusterId(null)}
-          />
-        ) : (
-          <div className="h-full flex flex-col items-center justify-center p-12 text-center space-y-6">
-            <div className="relative">
-              <div className="absolute inset-0 bg-blue-50/50 rounded-full blur-2xl animate-pulse" />
-              <div className="relative w-20 h-20 rounded-2xl bg-white border border-zinc-100 shadow-[0_10px_30px_rgba(0,0,0,0.03)] flex items-center justify-center">
-                <svg
-                  className="w-10 h-10 text-zinc-200"
-                  fill="none"
-                  viewBox="0 0 24 24"
-                  stroke="currentColor"
-                  strokeWidth={1}
-                >
-                  <path d="M4.5 12h15m0 0l-6.75-6.75M19.5 12l-6.75 6.75" />
-                </svg>
-              </div>
-            </div>
-            <div className="max-w-xs space-y-2">
-              <h2 className="text-xs font-black text-zinc-900 uppercase tracking-widest">
-                Cluster Intelligence
-              </h2>
-              <p className="text-[11px] text-zinc-400 leading-relaxed font-medium">
-                Select a market sector to reveal deep intelligence, upcoming
-                startups, and social discussions mapping that demand space.
+      <div className="grid h-full min-h-0 flex-1 lg:grid-cols-[360px_1fr]">
+        <aside className="min-h-0 border-b border-zinc-200/60 bg-[#f6f2e8]/70 lg:border-b-0 lg:border-r lg:border-zinc-200/70">
+          <div className="flex h-full flex-col">
+            <div className="border-b border-zinc-100 px-4 py-3">
+              <p className="text-[11px] font-semibold uppercase tracking-[0.2em] text-zinc-500">
+                Trending sectors
               </p>
             </div>
+
+            <div className="scrollbar-minimal flex-1 overflow-y-scroll">
+              {loading && clusters.length === 0 && (
+                <div className="flex flex-col items-center justify-center py-20">
+                  <div className="h-6 w-6 animate-spin rounded-full border-2 border-zinc-200 border-t-zinc-700" />
+                </div>
+              )}
+
+              {error && (
+                <div className="border-y border-red-200 bg-red-50 p-4 text-xs font-medium text-red-700">
+                  {error}
+                </div>
+              )}
+
+              <div className="space-y-2 p-2 sm:p-3">
+                {clusters.map((cluster) => (
+                  <FeedCard
+                    key={cluster.id}
+                    cluster={cluster}
+                    selectedClusterId={selectedClusterId}
+                    setSelectedClusterId={setSelectedClusterId}
+                  />
+                ))}
+              </div>
+
+              {hasMore && (
+                <div ref={loaderRef} className="pb-6 pt-3 text-center">
+                  <div className="text-[10px] font-medium uppercase tracking-[0.22em] text-zinc-400">
+                    {isFetchingMore ? "Loading more" : "Scroll for more"}
+                  </div>
+                </div>
+              )}
+            </div>
           </div>
-        )}
-      </main>
+        </aside>
+
+        <main className="scrollbar-minimal min-h-0 overflow-y-scroll bg-white/60">
+          {selectedCluster ? (
+            <DetailSection
+              key={selectedCluster.id}
+              selectedCluster={selectedCluster}
+              clearSelection={() => setSelectedClusterId(null)}
+            />
+          ) : (
+            <div className="flex h-full flex-col items-center justify-center p-8 text-center">
+              <div className="glass-panel max-w-md rounded-3xl p-8">
+                <div className="mx-auto mb-5 flex h-16 w-16 items-center justify-center rounded-2xl border border-zinc-200/80 bg-white/70">
+                  <svg
+                    className="h-8 w-8 text-zinc-500"
+                    fill="none"
+                    viewBox="0 0 24 24"
+                    stroke="currentColor"
+                    strokeWidth={1.5}
+                  >
+                    <path d="M4.5 12h15m0 0l-6.75-6.75M19.5 12l-6.75 6.75" />
+                  </svg>
+                </div>
+                <h2 className="font-display text-xl font-semibold text-zinc-900">
+                  Pick a cluster to inspect
+                </h2>
+                <p className="mt-2 text-sm leading-relaxed text-zinc-600">
+                  Select any sector from the left panel to open AI summaries,
+                  startup activity, and discussion signals.
+                </p>
+              </div>
+            </div>
+          )}
+        </main>
+      </div>
     </div>
   );
 }

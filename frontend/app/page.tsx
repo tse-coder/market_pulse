@@ -1,136 +1,177 @@
 import Link from "next/link";
-import BrandAlignmentBar from "./components/BrandAlignmentBar";
 
 export default function Home() {
+  const floatingPlatforms = [
+    {
+      name: "Reddit",
+      icon: "/brand-icons/reddit/icon-primary.jpeg",
+      className: "-left-1 top-[9%] animate-float",
+      sizeClass: "h-10 w-10",
+      rotateClass: "-rotate-6",
+    },
+    {
+      name: "Product Hunt",
+      icon: "/brand-icons/product-hunt/icon-primary.png",
+      className: "-right-1 top-[17%] animate-float-delayed",
+      sizeClass: "h-12 w-12",
+      rotateClass: "rotate-3",
+    },
+    {
+      name: "Hacker News",
+      icon: "/brand-icons/hacker-news/icon-primary.jpeg",
+      className: "left-[4%] bottom-[10%] animate-float-reverse",
+      sizeClass: "h-9 w-9",
+      rotateClass: "-rotate-12",
+    },
+    {
+      name: "GitHub",
+      icon: "/brand-icons/github/icon.png",
+      className: "right-[3%] bottom-[13%] animate-float",
+      sizeClass: "h-11 w-11",
+      rotateClass: "rotate-6",
+    },
+    {
+      name: "LinkedIn",
+      icon: "/brand-icons/LinkedIn/icon.png",
+      className: "left-[12%] top-[24%] hidden md:flex animate-float-delayed",
+      sizeClass: "h-10 w-10",
+      rotateClass: "rotate-12",
+    },
+    {
+      name: "Instagram",
+      icon: "/brand-icons/Instagram/Instagram_Icon_18.jpeg",
+      className: "right-[11%] top-[5%] hidden md:flex animate-float-reverse",
+      sizeClass: "h-14 w-14",
+      rotateClass: "-rotate-3",
+    },
+    {
+      name: "Discord",
+      icon: "/brand-icons/discord/icon.png",
+      className: "left-[10%] bottom-[34%] hidden md:flex animate-float-delayed",
+      sizeClass: "h-10 w-10",
+      rotateClass: "-rotate-6",
+    },
+    {
+      name: "Telegram",
+      icon: "/brand-icons/telegram/Telegram_Icon_6.jpeg",
+      className: "right-[10%] bottom-[35%] hidden md:flex animate-float",
+      sizeClass: "h-11 w-11",
+      rotateClass: "rotate-9",
+    },
+    {
+      name: "X",
+      icon: "/brand-icons/x/icon.jpeg",
+      className: "left-[19%] top-[4%] hidden 2xl:flex animate-float-reverse",
+      sizeClass: "h-9 w-9",
+      rotateClass: "-rotate-12",
+    },
+    {
+      name: "YouTube",
+      icon: "/brand-icons/youtube/icon.png",
+      className:
+        "right-[18%] bottom-[6%] hidden 2xl:flex animate-float-delayed",
+      sizeClass: "h-12 w-12",
+      rotateClass: "rotate-12",
+    },
+  ];
+
   return (
-    <div className="relative min-h-screen bg-white text-zinc-900 flex flex-col items-center justify-center px-6 overflow-hidden font-sans">
-      {/* Subtle top border decorative element */}
-      <div className="absolute top-0 left-0 right-0 h-1.5 bg-zinc-900" />
+    <div className="relative flex h-[100svh] flex-col overflow-hidden px-4 py-4 sm:px-6 sm:py-5 lg:px-10 lg:py-6">
+      <div className="pointer-events-none absolute inset-0 hero-grid opacity-35" />
+      <div className="pointer-events-none absolute -right-20 top-20 h-64 w-64 rounded-full bg-teal-300/20 blur-3xl animate-drift" />
+      <div className="pointer-events-none absolute -left-20 bottom-16 h-72 w-72 rounded-full bg-amber-300/20 blur-3xl animate-drift" />
 
-      {/* Background Effects */}
-      <div className="absolute inset-0 bg-[url('https://grainy-gradients.vercel.app/noise.svg')] opacity-[0.03] brightness-0 pointer-events-none" />
-      <div className="absolute inset-0 bg-[linear-gradient(to_right,#00000008_1px,transparent_1px),linear-gradient(to_bottom,#00000008_1px,transparent_1px)] bg-[size:60px_60px] pointer-events-none" />
-      <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[1000px] h-[1000px] bg-blue-500/[0.03] rounded-full blur-[120px] pointer-events-none" />
-
-      {/* Floating Icons */}
-      <div className="absolute top-[15%] left-[10%] w-20 h-20 bg-white shadow-[0_20px_50px_rgba(0,0,0,0.08)] rounded-3xl border border-zinc-100 flex items-center justify-center animate-float pointer-events-none md:flex hidden">
-        <img
-          src="/brand-icons/reddit/icon-primary.jpeg"
-          alt="Reddit"
-          className="w-12 h-12 rounded-xl"
-        />
-      </div>
-
-      <div className="absolute top-[20%] right-[15%] w-24 h-24 bg-white shadow-[0_20px_50px_rgba(0,0,0,0.08)] rounded-[2rem] border border-zinc-100 flex items-center justify-center animate-float-delayed pointer-events-none md:flex hidden">
-        <img
-          src="/brand-icons/product-hunt/icon-primary.png"
-          alt="Product Hunt"
-          className="w-14 h-14 rounded-2xl"
-        />
-      </div>
-
-      <div className="absolute bottom-[25%] left-[18%] w-16 h-16 bg-white shadow-[0_20px_50px_rgba(0,0,0,0.1)] rounded-2xl border border-zinc-100 flex items-center justify-center animate-float-reverse pointer-events-none md:flex hidden">
-        <img
-          src="/brand-icons/hacker-news/icon-primary.jpeg"
-          alt="Hacker News"
-          className="w-10 h-10 rounded-lg"
-        />
-      </div>
-
-      {/* New Floating Icons */}
-      <div className="absolute bottom-[35%] right-[8%] w-20 h-20 bg-white shadow-[0_20px_50px_rgba(0,0,0,0.08)] rounded-3xl border border-zinc-100 flex items-center justify-center animate-float-delayed pointer-events-none md:flex hidden">
-        <img
-          src="/brand-icons/discord/icon.png"
-          alt="Discord"
-          className="w-12 h-12 rounded-xl"
-        />
-      </div>
-
-      <div className="absolute top-[55%] left-[5%] w-20 h-20 bg-white shadow-[0_20px_50px_rgba(0,0,0,0.08)] rounded-3xl border border-zinc-100 flex items-center justify-center animate-float pointer-events-none md:flex hidden">
-        <img
-          src="/brand-icons/github/icon.png"
-          alt="GitHub"
-          className="w-12 h-12"
-        />
-      </div>
-
-      <div className="absolute bottom-[18%] right-[22%] w-16 h-16 bg-white shadow-[0_20px_50px_rgba(0,0,0,0.08)] rounded-2xl border border-zinc-100 flex items-center justify-center animate-float-reverse pointer-events-none md:flex hidden">
-        <img
-          src="/brand-icons/LinkedIn/icon.png"
-          alt="LinkedIn"
-          className="w-10 h-10 rounded-lg"
-        />
-      </div>
-
-      <div className="absolute top-[40%] right-[5%] w-16 h-16 bg-white shadow-[0_20px_50px_rgba(0,0,0,0.08)] rounded-2xl border border-zinc-100 flex items-center justify-center animate-float pointer-events-none md:flex hidden">
-        <img
-          src="/brand-icons/x/icon-no-bg.png"
-          alt="X"
-          className="w-10 h-10"
-        />
-      </div>
-
-      <div className="absolute bottom-[45%] left-[12%] w-14 h-14 bg-white shadow-[0_20px_50px_rgba(0,0,0,0.05)] rounded-2xl border border-zinc-100 flex items-center justify-center animate-float-delayed pointer-events-none md:flex hidden">
-        <img
-          src="/brand-icons/telegram/Telegram_Symbol_4.png"
-          alt="Telegram"
-          className="w-8 h-8"
-        />
-      </div>
-
-      <div className="absolute top-[65%] right-[10%] w-14 h-14 bg-white shadow-[0_20px_50px_rgba(0,0,0,0.05)] rounded-2xl border border-zinc-100 flex items-center justify-center animate-float-reverse pointer-events-none md:flex hidden">
-        <img
-          src="/brand-icons/youtube/icon.png"
-          alt="YouTube"
-          className="w-8 h-8 rounded-md"
-        />
-      </div>
-
-      <main className="relative z-10 flex flex-col items-center max-w-5xl text-center">
-        <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full border border-zinc-100 bg-white shadow-sm text-[10px] font-black tracking-[0.3em] uppercase text-zinc-500 mb-12">
-          <span className="shrink-0 w-2 h-2 rounded-full bg-blue-500 animate-pulse" />
-          Intelligence Engine 2.0
-        </div>
-
-        <h1 className="text-7xl md:text-[8rem] font-black tracking-tighter leading-[0.85] mb-12 text-zinc-900 uppercase italic">
-          Market <br />
-          <span className="text-zinc-200 non-italic">Pulse.</span>
-        </h1>
-
-        <p className="text-xl md:text-2xl text-zinc-500 max-w-2xl mb-16 leading-relaxed font-bold tracking-tight">
-          AI-driven opportunity scanning. We capture signals across the software
-          landscape so you can build what people actually want.
-        </p>
-
-        <div className="flex flex-col sm:flex-row gap-8 items-center">
-          <Link
-            href="/feed"
-            className="group px-14 py-6 bg-zinc-900 text-white font-black rounded-2xl transition-all hover:bg-zinc-800 hover:scale-[1.05] active:scale-[0.95] uppercase text-[12px] tracking-[0.2em] flex items-center gap-4 shadow-2xl shadow-zinc-900/20"
-          >
-            Start Scanning
-            <svg
-              className="w-5 h-5 transition-transform group-hover:translate-x-1"
-              fill="none"
-              viewBox="0 0 24 24"
-              stroke="currentColor"
+      <main className="relative z-10 mx-auto flex w-full max-w-6xl flex-1 items-center py-2 sm:py-3 lg:py-4">
+        <section className="relative w-full overflow-visible rounded-[2rem] border border-zinc-300/30 p-5 text-center sm:p-7 lg:p-9 animate-fade-up">
+          {floatingPlatforms.map((platform) => (
+            <div
+              key={platform.name}
+              className={`pointer-events-none absolute z-0 hidden sm:flex ${platform.className}`}
             >
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                strokeWidth={3}
-                d="M13 7l5 5m0 0l-5 5m5-5H6"
-              />
-            </svg>
-          </Link>
+              <div
+                className={`rounded-2xl border border-zinc-200/80 bg-white/65 p-2 shadow-[0_12px_30px_rgba(24,24,27,0.12)] backdrop-blur ${platform.rotateClass}`}
+              >
+                <img
+                  src={platform.icon}
+                  alt={platform.name}
+                  className={`${platform.sizeClass} rounded-xl object-cover`}
+                />
+              </div>
+            </div>
+          ))}
 
-          <button className="px-10 py-6 text-zinc-400 font-bold hover:text-zinc-900 transition-colors uppercase text-[11px] tracking-[0.3em]">
-            Methodology
-          </button>
-        </div>
+          <div className="relative z-10 mx-auto max-w-4xl">
+            <p className="mb-5 inline-flex items-center gap-2 rounded-full border border-teal-200/70 bg-transparent px-3 py-1.5 text-[11px] font-semibold uppercase tracking-[0.2em] text-teal-800">
+              Market Pulse
+              <span className="h-1.5 w-1.5 animate-pulse rounded-full bg-teal-600" />
+              Daily opportunity radar
+            </p>
+
+            <h1 className="mx-auto max-w-4xl font-display text-[2rem] font-bold leading-[0.92] tracking-tight text-zinc-900 sm:text-5xl lg:text-6xl">
+              Build what the market is quietly asking for.
+            </h1>
+
+            <p className="mx-auto mt-4 max-w-2xl text-sm leading-relaxed text-zinc-600 sm:text-base lg:text-lg">
+              Market Pulse scans startup launches, community threads, and
+              product conversations to surface momentum, pain, and whitespace
+              before the crowd sees it.
+            </p>
+
+            <div className="mt-6 flex flex-col items-center justify-center gap-3 sm:flex-row sm:items-center">
+              <Link
+                href="/feed"
+                className="group inline-flex items-center justify-center gap-2 rounded-2xl bg-zinc-900 px-6 py-3 text-xs font-semibold uppercase tracking-[0.18em] text-zinc-50 transition hover:-translate-y-0.5 hover:bg-zinc-800 sm:text-sm"
+              >
+                Explore Clusters
+                <svg
+                  className="h-4 w-4 transition-transform group-hover:translate-x-1"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                  stroke="currentColor"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth={2}
+                    d="M13 7l5 5m0 0l-5 5m5-5H6"
+                  />
+                </svg>
+              </Link>
+            </div>
+
+            <div className="mx-auto mt-6 grid max-w-3xl gap-2.5 sm:grid-cols-3">
+              {[
+                ["45+", "signal sources"],
+                ["24h", "trend refresh"],
+                ["AI", "topic clustering"],
+              ].map(([value, label]) => (
+                <div
+                  key={label}
+                  className="rounded-2xl border border-zinc-200/80 bg-transparent px-4 py-3"
+                >
+                  <p className="font-display text-2xl font-semibold tracking-tight text-zinc-900">
+                    {value}
+                  </p>
+                  <p className="mt-1 text-[10px] uppercase tracking-[0.18em] text-zinc-500">
+                    {label}
+                  </p>
+                </div>
+              ))}
+            </div>
+          </div>
+
+          <div className="mt-5 flex flex-wrap items-center justify-center gap-2 sm:hidden">
+            {floatingPlatforms.map((platform) => (
+              <span
+                key={`${platform.name}-mobile`}
+                className="rounded-full border border-zinc-200/80 bg-white/80 px-3 py-1 text-[10px] font-medium uppercase tracking-[0.16em] text-zinc-600"
+              >
+                {platform.name}
+              </span>
+            ))}
+          </div>
+        </section>
       </main>
-
-      {/* Brand alignment bar */}
-      {/* <BrandAlignmentBar /> */}
     </div>
   );
 }
