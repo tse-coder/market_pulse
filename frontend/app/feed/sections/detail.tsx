@@ -63,7 +63,11 @@ export default function DetailSection({
     [cluster.id],
   );
   const chartData = useMemo(
-    () => mockHistoryPoints.map((point) => ({ week: point.label, momentum: point.val })),
+    () =>
+      mockHistoryPoints.map((point) => ({
+        week: point.label,
+        momentum: point.val,
+      })),
     [mockHistoryPoints],
   );
   const chartConfig = {
@@ -169,8 +173,16 @@ export default function DetailSection({
                     type="linear"
                     stroke="var(--color-momentum)"
                     strokeWidth={3}
-                    dot={{ r: 3, fill: "var(--color-momentum)", strokeWidth: 0 }}
-                    activeDot={{ r: 5, fill: "var(--color-momentum)", strokeWidth: 0 }}
+                    dot={{
+                      r: 3,
+                      fill: "var(--color-momentum)",
+                      strokeWidth: 0,
+                    }}
+                    activeDot={{
+                      r: 5,
+                      fill: "var(--color-momentum)",
+                      strokeWidth: 0,
+                    }}
                   />
                 </LineChart>
               </ChartContainer>
@@ -226,37 +238,37 @@ export default function DetailSection({
                           ? "/brand-icons/product-hunt/icon-primary.png"
                           : "/brand-icons/hacker-news/icon-primary.jpeg"
                     }
-                      className="h-5 w-5 rounded-full object-cover opacity-70 transition-all group-hover:opacity-100"
-                      alt={signal.platform}
+                    className="h-5 w-5 rounded-full object-cover opacity-70 transition-all group-hover:opacity-100"
+                    alt={signal.platform}
                   />
-                    <span className="text-[10px] font-medium uppercase tracking-[0.18em] text-zinc-500 group-hover:text-zinc-900">
+                  <span className="text-[10px] font-medium uppercase tracking-[0.18em] text-zinc-500 group-hover:text-zinc-900">
                     {signal.platform.replace("_", " ")}
                   </span>
-                    <span className="text-zinc-300">•</span>
-                    <span className="text-[10px] uppercase tracking-[0.14em] text-zinc-400">
+                  <span className="text-zinc-300">•</span>
+                  <span className="text-[10px] uppercase tracking-[0.14em] text-zinc-400">
                     {signal.time
                       ? new Date(signal.time).toLocaleDateString()
                       : ""}
                   </span>
                 </div>
 
-                  <h3 className="font-display mb-2 text-xl font-semibold tracking-tight text-zinc-900 group-hover:text-teal-800">
+                <h3 className="font-display mb-2 text-xl font-semibold tracking-tight text-zinc-900 group-hover:text-teal-800">
                   {signal.title}
                 </h3>
 
-                  <div className="mb-5 line-clamp-3 text-sm leading-relaxed text-zinc-600 sm:text-[15px]">
+                <div className="mb-5 line-clamp-3 text-sm leading-relaxed text-zinc-600 sm:text-[15px]">
                   {signal.content}
                 </div>
 
-                  <div className="mb-5 rounded-2xl border border-teal-200/80 bg-teal-50/60 p-4">
-                    <span className="mb-2 block text-[10px] font-medium uppercase tracking-[0.2em] text-teal-700">
+                <div className="mb-5 rounded-2xl border border-teal-200/80 bg-teal-50/60 p-4">
+                  <span className="mb-2 block text-[10px] font-medium uppercase tracking-[0.2em] text-teal-700">
                     AI Pulse Summary
                   </span>
-                    <p className="text-sm leading-relaxed text-zinc-700">
-                      &quot;
+                  <p className="text-sm leading-relaxed text-zinc-700">
+                    &quot;
                     {signal.ai_summary ||
                       "Automated analysis pending deep semantic verification..."}
-                      &quot;
+                    &quot;
                   </p>
                 </div>
 
