@@ -3,10 +3,8 @@ frontend/node_modules
 frontend/.next
 frontend/.env.local
 
-# Python
-backend/__pycache__/
-backend/.env
-backend/backend-env/
+# past backend (fastapi code)
+backend
 
 # Worker
 worker/__pycache__/
