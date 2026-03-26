@@ -86,12 +86,12 @@ Market Pulse is built around a recurring data pipeline that turns raw social sig
 ### 4) Opportunity Scoring
 
 - Computes cluster-level metrics such as:
-   - total signal volume
-   - startup vs discussion distribution
-   - average sentiment
-   - momentum score
-   - pain score
-   - opportunity score
+  - total signal volume
+  - startup vs discussion distribution
+  - average sentiment
+  - momentum score
+  - pain score
+  - opportunity score
 - These scores are used to rank and surface high-potential market opportunities.
 
 ### 5) Feed and API Functionality
