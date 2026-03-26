@@ -5,19 +5,14 @@ Market Pulse is an AI-powered market demand scanner. It ingests social platform 
 ## Architecture
 
 ```ascii
-                      +---------------+
-                      |   Frontend    |
-                      |  (Next.js)    |
-                      +-------+-------+
+                           +---------------+
+                           |   Frontend    |
+                           |   (Next.js)   |
+                           +-------+-------+
                               |
-                     [REST API (FastAPI)]
+                       [Next.js Route Handlers /api/* (Node.js)]
                               |
-                      +-------v-------+
-                      |    Backend    |
-                      |  (FastAPI)    |
-                      +-------+-------+
-                              |
-                       [MongoDB store]
+                            [MongoDB store]
                               |
                       +-------v-------+
                       |    Worker     |
@@ -30,7 +25,7 @@ Market Pulse is an AI-powered market demand scanner. It ingests social platform 
 ## Tech Stack
 
 - **Frontend:** Next.js (App Router), Tailwind CSS
-- **Backend:** FastAPI, Pydantic, Motor (MongoDB async)
+- **API Layer:** Next.js Route Handlers (serverless/server runtime)
 - **Worker:** Python, Google Gemini SDK
 - **AI/LLM:** Google Gemini (Generative AI & Semantic Embeddings)
 - **Database:** MongoDB
@@ -41,7 +36,7 @@ Market Pulse is an AI-powered market demand scanner. It ingests social platform 
 ```
 market-pulse/
 ├── frontend/                # Next.js app
-├── backend/                 # FastAPI API layer
+├── backend/                 # legacy FastAPI API layer (optional, no longer required)
 ├── worker/                  # Background jobs (Gemini API + ingestion)
 ├── infrastructure/          # Deployment configs
 ├── docker-compose.yml       # Composes all services
@@ -55,7 +50,7 @@ market-pulse/
 
 - Docker & Docker Compose
 - Node.js (for local frontend dev)
-- Python 3.11+ (for local backend/worker dev)
+- Python 3.11+ (for local worker dev)
 
 ### Docker Flow
 
@@ -70,20 +65,9 @@ market-pulse/
    ```
 4. Access applications:
    - Frontend: `http://localhost:3000`
-   - Backend API: `http://localhost:8000/api/health`
-   - Swagger Docs: `http://localhost:8000/docs`
+   - API Health: `http://localhost:3000/api/health`
 
 ### Development Flow (Local)
-
-**Backend:**
-
-```bash
-cd backend
-python -m venv venv
-source venv/bin/activate
-pip install -r requirements.txt
-uvicorn app.main:app --reload
-```
 
 **Worker:**
 

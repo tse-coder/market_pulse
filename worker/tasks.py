@@ -18,11 +18,11 @@ def run_pipeline():
     connect()
 
     # Ingestion
-    # hn_posts = fetch_hackernews(limit=40)
-    # save_hacker_news(hn_posts)
+    hn_posts = fetch_hackernews(limit=40)
+    save_hacker_news(hn_posts)
 
-    # ph_posts = fetch_producthunt(limit=40)
-    # save_product_hunt(ph_posts)
+    ph_posts = fetch_producthunt(limit=40)
+    save_product_hunt(ph_posts)
 
     # AI Processing
     process_ai_intelligence(limit=80)

@@ -1,22 +1,6 @@
 version: '3.8'
 
 services:
-  backend:
-    build:
-      context: ./backend
-      dockerfile: Dockerfile
-    container_name: market_pulse_backend
-    ports:
-      - "8000:8000"
-    environment:
-      - MONGO_URI=mongodb://mongodb:27017
-      - DATABASE_NAME=market_pulse
-      - ENVIRONMENT=development
-    depends_on:
-      - mongodb
-    volumes:
-      - ./backend:/app
-
   worker:
     build:
       context: ./worker
@@ -37,9 +21,10 @@ services:
     ports:
       - "3000:3000"
     environment:
-      - NEXT_PUBLIC_API_URL=http://localhost:8000/api
+      - MONGO_URI=mongodb://mongodb:27017
+      - DATABASE_NAME=market_pulse
     depends_on:
-      - backend
+      - mongodb
 
   mongodb:
     image: mongo:6.0
