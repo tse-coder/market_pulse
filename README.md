@@ -2,35 +2,6 @@
 
 Market Pulse is an AI-powered market demand scanner. It ingests social platform data, processes it via AI to determine trending topics, and provides real-time market signals for SaaS builders and researchers.
 
-## Architecture
-
-```ascii
-                           +---------------+
-                           |   Frontend    |
-                           |   (Next.js)   |
-                           +-------+-------+
-                              |
-                       [Next.js Route Handlers /api/* (Node.js)]
-                              |
-                            [MongoDB store]
-                              |
-                      +-------v-------+
-                      |    Worker     |
-                      |  (Scheduler)  |
-                      +-------+-------+
-                              |
-           [Hacker News / Product Hunt / Reddit / Gemini AI]
-```
-
-## Tech Stack
-
-- **Frontend:** Next.js (App Router), Tailwind CSS
-- **API Layer:** Next.js Route Handlers (serverless/server runtime)
-- **Worker:** Python, Google Gemini SDK
-- **AI/LLM:** Google Gemini (Generative AI & Semantic Embeddings)
-- **Database:** MongoDB
-- **Infrastructure:** Docker, Docker Compose
-
 ## Folder Structure
 
 ```
@@ -86,6 +57,64 @@ cd frontend
 npm install
 npm run dev
 ```
+
+## Core Software Functionality
+
+Market Pulse is built around a recurring data pipeline that turns raw social signals into structured market intelligence.
+
+### 1) Data Ingestion (Scraping / Collection)
+
+- Periodically collects public signals from external platforms.
+- Current active ingestion includes Hacker News and Product Hunt.
+- Reddit ingestion support exists in the worker codebase and can be enabled as part of roadmap progression.
+- Each ingested item is normalized into a common signal format (source, title/content, URL, timestamp, engagement metadata).
+
+### 2) AI Enrichment
+
+- Generates AI summaries for each signal.
+- Assigns AI sentiment and topical tags.
+- Produces embedding vectors for semantic similarity analysis.
+- Enriched fields are stored with the original signal for downstream clustering and ranking.
+
+### 3) Semantic Clustering
+
+- Groups related signals into market clusters using embedding similarity.
+- Maintains a centroid per cluster and assigns new signals to the best-fitting cluster.
+- Supports creating new clusters when no existing centroid is close enough.
+- Maintains cluster snapshots over time for historical trend analysis.
+
+### 4) Opportunity Scoring
+
+- Computes cluster-level metrics such as:
+   - total signal volume
+   - startup vs discussion distribution
+   - average sentiment
+   - momentum score
+   - pain score
+   - opportunity score
+- These scores are used to rank and surface high-potential market opportunities.
+
+### 5) Feed and API Functionality
+
+- Exposes cluster and signal data through API endpoints.
+- Supports paginated/infinite feed loading.
+- Provides per-cluster detail views with signal-level AI metadata.
+- Uses MongoDB as the shared store between worker processing and API reads.
+
+### 6) Scheduling and Runtime
+
+- Worker runs as a scheduled background process (default interval: every 10 minutes).
+- The pipeline is designed to continuously refresh intelligence as new external signals arrive.
+- Can run locally or through Docker Compose as part of the full stack.
+
+## Tech Stack
+
+- **Frontend:** Next.js (App Router), Tailwind CSS
+- **API Layer:** Next.js Route Handlers (serverless/server runtime)
+- **Worker:** Python, Google Gemini SDK
+- **AI/LLM:** Google Gemini (Generative AI & Semantic Embeddings)
+- **Database:** MongoDB
+- **Infrastructure:** Docker, Docker Compose
 
 ## Future Roadmap
 
