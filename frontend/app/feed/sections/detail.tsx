@@ -2,6 +2,7 @@ import React, { useEffect, useMemo, useState } from "react";
 import { ClusterItem } from "../page";
 import { fetchClusterSignals } from "@/lib/api";
 import { getMockClusterHistory } from "@/lib/constants/mockClusterGraphData";
+import { iconMap } from "@/lib/constants/iconMap";
 import {
   ChartContainer,
   ChartTooltip,
@@ -256,28 +257,30 @@ export default function DetailSection({
                   key={signal.id}
                   className="group rounded-2xl border border-zinc-200/70 bg-white/75 p-5 transition hover:border-zinc-300 hover:bg-white"
                 >
-                  <div className="mb-4 flex items-center gap-3">
-                    <img
-                      src={
-                        signal.platform === "reddit"
-                          ? "/brand-icons/reddit/icon-primary.jpeg"
-                          : signal.platform === "product_hunt"
-                            ? "/brand-icons/product-hunt/icon-primary.png"
-                            : "/brand-icons/hacker-news/icon-primary.jpeg"
-                      }
-                      className="h-5 w-5 rounded-full object-cover opacity-70 transition-all group-hover:opacity-100"
-                      alt={signal.platform}
-                    />
-                    <span className="text-[10px] font-medium uppercase tracking-[0.18em] text-zinc-500 group-hover:text-zinc-900">
-                      {signal.platform.replace("_", " ")}
-                    </span>
-                    <span className="text-zinc-300">•</span>
-                    <span className="text-[10px] uppercase tracking-[0.14em] text-zinc-400">
-                      {signal.time
-                        ? new Date(signal.time).toLocaleDateString()
-                        : ""}
-                    </span>
-                  </div>
+                  {(() => {
+                    const platformKey = signal.platform.toLowerCase();
+                    const platformIcon =
+                      iconMap[platformKey] ?? iconMap.hacker_news;
+
+                    return (
+                      <div className="mb-4 flex items-center gap-3">
+                        <img
+                          src={platformIcon}
+                          className="h-5 w-5 rounded-full object-cover opacity-70 transition-all group-hover:opacity-100"
+                          alt={signal.platform}
+                        />
+                        <span className="text-[10px] font-medium uppercase tracking-[0.18em] text-zinc-500 group-hover:text-zinc-900">
+                          {signal.platform.replace("_", " ")}
+                        </span>
+                        <span className="text-zinc-300">•</span>
+                        <span className="text-[10px] uppercase tracking-[0.14em] text-zinc-400">
+                          {signal.time
+                            ? new Date(signal.time).toLocaleDateString()
+                            : ""}
+                        </span>
+                      </div>
+                    );
+                  })()}
 
                   <h3 className="font-display mb-2 text-xl font-semibold tracking-tight text-zinc-900 group-hover:text-teal-800">
                     {signal.title}
