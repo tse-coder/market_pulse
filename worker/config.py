@@ -16,6 +16,7 @@ class Settings(BaseSettings):
     GOOGLE_API_KEY: str = Field(default="", validation_alias="GOOGLE_API_KEY")
     ENVIRONMENT: str = Field(default="development", validation_alias="ENVIRONMENT")
     PH_TOKEN: str = Field(default="", validation_alias="PH_TOKEN")
+    STACK_OVERFLOW_API_KEY: str = Field(default="", validation_alias="STACK_OVERFLOW_API_KEY")
 
     model_config = SettingsConfigDict(
         env_file=".env", env_file_encoding="utf-8", extra="ignore"

@@ -1,6 +1,6 @@
 import logging
-from database import connect, save_hacker_news, save_product_hunt
-from ingestion import fetch_hackernews, fetch_producthunt
+from database import connect, save_hacker_news, save_product_hunt, save_stack_overflow
+from ingestion import fetch_hackernews, fetch_producthunt, fetch_stackoverflow
 from processing import (
     process_ai_intelligence,
     process_semantic_clustering,
@@ -18,17 +18,20 @@ def run_pipeline():
     connect()
 
     # Ingestion
-    hn_posts = fetch_hackernews(limit=40)
-    save_hacker_news(hn_posts)
+    # hn_posts = fetch_hackernews(limit=40)
+    # save_hacker_news(hn_posts)
 
-    ph_posts = fetch_producthunt(limit=40)
-    save_product_hunt(ph_posts)
+    # ph_posts = fetch_producthunt(limit=40)
+    # save_product_hunt(ph_posts)
+
+    so_posts = fetch_stackoverflow(limit=40)
+    save_stack_overflow(so_posts)
 
     # AI Processing
-    process_ai_intelligence(limit=80)
+    process_ai_intelligence(limit=120)
 
     # Semantic Clustering
-    process_semantic_clustering(limit=80)
+    process_semantic_clustering(limit=120)
 
     # Time-Decay Score Refresh
     refresh_intelligence_scores(time_window_hours=48)

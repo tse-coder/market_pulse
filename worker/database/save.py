@@ -63,3 +63,36 @@ def save_product_hunt(posts):
         )
         signal.save()
         logger.info(f"Saved PH signal: {signal.external_id}")
+
+
+def save_stack_overflow(posts):
+    """
+    Saves fetched Stack Overflow questions to the database.
+    """
+    for post in posts:
+        raw_time = post.get("time")
+        try:
+            parsed_time = datetime.utcfromtimestamp(int(raw_time))
+        except Exception:
+            parsed_time = datetime.utcnow()
+
+        raw_data = post.get("raw_data", {})
+        signal = Signal(
+            platform="stack_overflow",
+            external_id=f"so_{post['id']}",
+            title=post.get("title", "No title"),
+            content=post.get("content", ""),
+            score=post.get("score", 0),
+            time=parsed_time,
+            url=post.get("url", ""),
+            metadata={
+                "author": post.get("author"),
+                "tags": raw_data.get("tags", []),
+                "answer_count": raw_data.get("answer_count", 0),
+                "view_count": raw_data.get("view_count", 0),
+                "is_answered": raw_data.get("is_answered", False),
+                "accepted_answer_id": raw_data.get("accepted_answer_id"),
+            },
+        )
+        signal.save()
+        logger.info(f"Saved SO signal: {signal.external_id}")
