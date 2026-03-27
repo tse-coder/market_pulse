@@ -33,14 +33,14 @@ export default function Home() {
     {
       name: "LinkedIn",
       icon: "/brand-icons/LinkedIn/icon.png",
-      className: "left-[12%] top-[24%] hidden md:flex animate-float-delayed",
+      className: "left-[6%] top-[30%] hidden md:flex animate-float-delayed",
       sizeClass: "h-10 w-10",
       rotateClass: "rotate-12",
     },
     {
       name: "Instagram",
       icon: "/brand-icons/Instagram/Instagram_Icon_18.jpeg",
-      className: "right-[11%] top-[5%] hidden md:flex animate-float-reverse",
+      className: "right-[11%] top-0 hidden md:flex animate-float-reverse",
       sizeClass: "h-14 w-14",
       rotateClass: "-rotate-3",
     },
@@ -61,7 +61,7 @@ export default function Home() {
     {
       name: "X",
       icon: "/brand-icons/x/icon.jpeg",
-      className: "left-[19%] top-[4%] hidden 2xl:flex animate-float-reverse",
+      className: "left-[19%] top-0 hidden 2xl:flex animate-float-reverse",
       sizeClass: "h-9 w-9",
       rotateClass: "-rotate-12",
     },
@@ -82,11 +82,11 @@ export default function Home() {
       <div className="pointer-events-none absolute -left-20 bottom-16 h-72 w-72 rounded-full bg-amber-300/20 blur-3xl animate-drift" />
 
       <main className="relative z-10 mx-auto flex w-full max-w-6xl flex-1 items-center py-2 sm:py-3 lg:py-4">
-        <section className="relative w-full overflow-visible rounded-[2rem] border border-zinc-300/30 p-5 text-center sm:p-7 lg:p-9 animate-fade-up">
+        <section className="relative w-full overflow-visible rounded-[2rem] p-5 text-center sm:p-7 lg:p-9 animate-fade-up">
           {floatingPlatforms.map((platform) => (
             <div
               key={platform.name}
-              className={`pointer-events-none absolute z-0 hidden sm:flex ${platform.className}`}
+              className={`pointer-events-none absolute z-0 hidden opacity-30 sm:flex ${platform.className}`}
             >
               <div
                 className={`rounded-2xl border border-zinc-200/80 bg-white/65 p-2 shadow-[0_12px_30px_rgba(24,24,27,0.12)] backdrop-blur ${platform.rotateClass}`}
