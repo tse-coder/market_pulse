@@ -55,7 +55,7 @@ export default function ClusterAiSidebar({
       {
         id: `welcome-${cluster.id}`,
         role: "assistant",
-        content: `Ask me anything about ${cluster.name}. I can summarize sentiment, risks, and startup opportunities with simulated intelligence output.`,
+        content: `Ask me anything about ${cluster.name}. I can summarize sentiment, risks, and startup opportunities.`,
       },
     ]);
     setChatInput("");
@@ -164,14 +164,8 @@ export default function ClusterAiSidebar({
         <div className="flex h-11 items-center justify-between border-b border-zinc-200 px-2">
           <div className="flex items-center gap-2">
             <span className="text-xs font-semibold uppercase tracking-[0.12em] text-zinc-700">
-              AI Chat
+              Market-Pulse AI
             </span>
-            <span className="rounded bg-emerald-100 px-1.5 py-0.5 text-[9px] font-semibold uppercase tracking-[0.12em] text-emerald-700">
-              mock
-            </span>
-          </div>
-          <div className="text-[10px] uppercase tracking-[0.12em] text-zinc-500">
-            GPT Analyst
           </div>
         </div>
 
@@ -227,7 +221,7 @@ export default function ClusterAiSidebar({
             <input
               value={chatInput}
               onChange={(event) => setChatInput(event.target.value)}
-              placeholder="Ask about this cluster..."
+              placeholder="Ask about this Topic..."
               className="w-full rounded border border-zinc-200 bg-white px-2.5 py-2 text-sm text-zinc-800 outline-none focus:border-zinc-400"
             />
             <button

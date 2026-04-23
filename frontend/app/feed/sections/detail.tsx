@@ -11,6 +11,9 @@ import {
 } from "@/components/ui/chart";
 import { CartesianGrid, Line, LineChart, XAxis } from "recharts";
 import ClusterAiSidebar from "./clusterAiSidebar";
+import { Sparkle, Sparkles } from "lucide-react";
+import Lottie from "lottie-react";
+import animationData from "@/public/animations/loading.json";
 
 type Signal = {
   id: string;
@@ -110,8 +113,8 @@ export default function DetailSection({
         <div className="mx-auto w-full max-w-4xl p-5 pb-6 sm:p-8 lg:p-10">
           <div className="mb-10 space-y-5">
             <div className="flex items-center gap-3">
-              <span className="rounded-full border border-teal-200 bg-teal-50 px-2.5 py-1 text-[10px] font-semibold uppercase tracking-[0.16em] text-teal-700">
-                Intelligence Cluster
+              <span className="text-[10px] font-medium uppercase tracking-[0.2em] text-zinc-500">
+                Topics
               </span>
               <span className="text-zinc-300">/</span>
               <span className="text-[10px] font-medium uppercase tracking-[0.2em] text-zinc-500">
@@ -123,13 +126,13 @@ export default function DetailSection({
               {cluster.name}
             </h1>
 
-            <p className="max-w-3xl border-l-2 border-zinc-300 pl-4 text-sm leading-relaxed text-zinc-600 sm:pl-5 sm:text-base">
+            {/* <p className="max-w-3xl border-l-2 border-zinc-300 pl-4 text-sm leading-relaxed text-zinc-600 sm:pl-5 sm:text-base">
               {cluster.description ||
                 "Synthesizing market intelligence from multiple social signals and platform data to map emerging demand vectors and startup opportunities in this sector."}
-            </p>
+            </p> */}
           </div>
 
-          <div className="glass-panel group relative mb-10 overflow-hidden rounded-3xl p-5 sm:p-7">
+          <div className="glass-panel group relative mb-10 overflow-hidden p-5 sm:p-7">
             <div className="mb-8 flex flex-wrap items-start justify-between gap-6">
               <div>
                 <button
@@ -151,7 +154,7 @@ export default function DetailSection({
                 </div>
               </div>
 
-              <div className="flex gap-4">
+              {/* <div className="flex gap-4">
                 <div className="text-right">
                   <span className="block text-[10px] uppercase tracking-[0.16em] text-zinc-500">
                     Sentiment
@@ -174,7 +177,7 @@ export default function DetailSection({
                     {Math.round(cluster.pain_score)}% Friction
                   </span>
                 </div>
-              </div>
+              </div> */}
             </div>
 
             <div className="pr-2 sm:pr-4">
@@ -185,7 +188,7 @@ export default function DetailSection({
                     data={chartData}
                     margin={{ top: 10, right: 10, left: -12, bottom: 10 }}
                   >
-                    <CartesianGrid vertical={false} strokeDasharray="3 3" />
+                    <CartesianGrid vertical={false} strokeDasharray="2 2" />
                     <XAxis
                       dataKey="week"
                       tickLine={false}
@@ -218,7 +221,7 @@ export default function DetailSection({
             </div>
           </div>
 
-          <div className="sticky top-0 z-10 mb-7 flex items-center gap-2 overflow-x-auto border-b border-zinc-200 bg-[#f8f5ee]/95 py-2 backdrop-blur">
+          <div className="sticky top-0 z-10 mb-7 flex items-center gap-2 overflow-x-auto rounded-3xl px-3 border-b border-zinc-200 bg-[#f8f5ee]/95 py-2 backdrop-blur">
             {(["startup", "discussion", "prediction"] as const).map((tab) => {
               const count = signals.filter((s) => s.type === tab).length;
               return (
@@ -240,9 +243,10 @@ export default function DetailSection({
           <div className="mb-20 space-y-8">
             {loading ? (
               <div className="flex flex-col items-center justify-center py-20 opacity-50">
-                <div className="h-5 w-5 animate-spin rounded-full border-2 border-zinc-200 border-t-zinc-900" />
                 <span className="mt-4 text-[10px] font-medium uppercase tracking-[0.2em]">
-                  Hydrating Intelligence
+                  <div style={{ width: 50, height: 50 }}>
+                    <Lottie animationData={animationData} loop={true} />
+                  </div>
                 </span>
               </div>
             ) : filteredSignals.length === 0 ? (
@@ -292,7 +296,7 @@ export default function DetailSection({
 
                   <div className="mb-5 rounded-2xl border border-teal-200/80 bg-teal-50/60 p-4">
                     <span className="mb-2 block text-[10px] font-medium uppercase tracking-[0.2em] text-teal-700">
-                      AI Pulse Summary
+                      <Sparkles size={15} />
                     </span>
                     <p className="text-sm leading-relaxed text-zinc-700">
                       &quot;

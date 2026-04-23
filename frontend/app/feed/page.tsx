@@ -3,6 +3,8 @@ import { useState, useEffect, useRef } from "react";
 import { fetchClusters } from "@/lib/api";
 import DetailSection from "./sections/detail";
 import FeedCard from "./sections/feedCard";
+import Lottie from "lottie-react";
+import animationData from "@/public/animations/loading.json";
 
 export type ClusterItem = {
   id: string;
@@ -89,20 +91,17 @@ export default function FeedPage() {
           <img
             src="/market_pulse.png"
             alt="Market Pulse"
-            className="h-9 w-9 rounded-lg border border-zinc-200/80 bg-white p-1"
+            className="h-9 w-9 p-1"
           />
           <div>
             <p className="font-display text-sm font-semibold text-zinc-900">
               Market Pulse Feed
             </p>
             <p className="text-[10px] uppercase tracking-[0.2em] text-zinc-500">
-              Live Opportunity Clusters
+              Live Opportunity
             </p>
           </div>
         </div>
-        <span className="rounded-full bg-teal-50 px-3 py-1 text-[10px] font-semibold uppercase tracking-[0.18em] text-teal-700">
-          realtime
-        </span>
       </header>
 
       <div className="grid h-full min-h-0 flex-1 lg:grid-cols-[360px_1fr]">
@@ -110,14 +109,16 @@ export default function FeedPage() {
           <div className="flex h-full flex-col">
             <div className="border-b border-zinc-100 px-4 py-3">
               <p className="text-[11px] font-semibold uppercase tracking-[0.2em] text-zinc-500">
-                Trending sectors
+                Trending topics
               </p>
             </div>
 
             <div className="scrollbar-minimal flex-1 overflow-y-scroll">
               {loading && clusters.length === 0 && (
                 <div className="flex flex-col items-center justify-center py-20">
-                  <div className="h-6 w-6 animate-spin rounded-full border-2 border-zinc-200 border-t-zinc-700" />
+                  <div style={{ width: 100, height: 100 }}>
+                    <Lottie animationData={animationData} loop={true} />
+                  </div>
                 </div>
               )}
 

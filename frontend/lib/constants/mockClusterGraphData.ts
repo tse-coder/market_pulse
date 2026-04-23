@@ -8,12 +8,12 @@ const WEEK_LABELS = ["W1", "W2", "W3", "W4", "W5", "W6", "W7", "W8"];
 const DEFAULT_SERIES: ClusterHistoryPoint[] = [
   { val: 26, label: "W1" },
   { val: 34, label: "W2" },
-  { val: 41, label: "W3" },
+  { val: 0, label: "W3" },
   { val: 38, label: "W4" },
-  { val: 47, label: "W5" },
+  { val: 27, label: "W5" },
   { val: 56, label: "W6" },
   { val: 61, label: "W7" },
-  { val: 68, label: "W8" },
+  { val: 48, label: "W8" },
 ];
 
 export function getMockClusterHistory(clusterId: string): ClusterHistoryPoint[] {
