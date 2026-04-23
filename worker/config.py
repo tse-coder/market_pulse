@@ -3,10 +3,10 @@ from pydantic_settings import BaseSettings, SettingsConfigDict
 
 
 class Settings(BaseSettings):
-    MONGO_URI: str = Field(
-        default="mongodb://localhost:27017", validation_alias="MONGO_URI"
+    SUPABASE_URL: str = Field(default="", validation_alias="SUPABASE_URL")
+    SUPABASE_SERVICE_ROLE_KEY: str = Field(
+        default="", validation_alias="SUPABASE_SERVICE_ROLE_KEY"
     )
-    DATABASE_NAME: str = Field(default="market_pulse", validation_alias="DATABASE_NAME")
     REDDIT_CLIENT_ID: str = Field(default="",validation_alias="REDDIT_CLIENT_ID")
     REDDIT_SECRET: str = Field(default="", validation_alias="REDDIT_SECRET")
     REDDIT_USER_AGENT: str = Field(

@@ -1,5 +1,8 @@
 import { NextResponse } from "next/server";
-import { getDatabase, dateToIsoString } from "@/lib/server/mongodb";
+import {
+  getSupabaseServerClient,
+  dateToIsoString,
+} from "@/lib/server/supabase";
 
 export const runtime = "nodejs";
 
@@ -7,23 +10,23 @@ type ClusterSignalsParams = {
   params: Promise<{ clusterId: string }>;
 };
 
-export async function GET(
-  _request: Request,
-  context: ClusterSignalsParams,
-) {
+export async function GET(_request: Request, context: ClusterSignalsParams) {
   const { clusterId } = await context.params;
 
   try {
-    const db = await getDatabase();
+    const supabase = getSupabaseServerClient();
+    const { data: docs, error } = await supabase
+      .from("signals")
+      .select("*")
+      .eq("cluster_id", clusterId)
+      .order("total_score", { ascending: false });
 
-    const docs = await db
-      .collection("signal")
-      .find({ cluster_id: clusterId })
-      .sort({ total_score: -1 })
-      .toArray();
+    if (error) {
+      throw error;
+    }
 
-    const results = docs.map((doc) => ({
-      id: String(doc._id),
+    const results = (docs ?? []).map((doc) => ({
+      id: String(doc.id),
       platform: doc.platform,
       title: doc.title,
       content: doc.content,
@@ -41,7 +44,7 @@ export async function GET(
     return NextResponse.json(results);
   } catch {
     return NextResponse.json(
-      { detail: "Database client not initialized" },
+      { detail: "Supabase client not initialized" },
       { status: 503 },
     );
   }

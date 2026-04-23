@@ -1,5 +1,8 @@
 import { NextResponse } from "next/server";
-import { getDatabase, dateToIsoString } from "@/lib/server/mongodb";
+import {
+  getSupabaseServerClient,
+  dateToIsoString,
+} from "@/lib/server/supabase";
 
 export const runtime = "nodejs";
 
@@ -29,19 +32,21 @@ export async function GET(request: Request) {
   }
 
   try {
-    const db = await getDatabase();
+    const supabase = getSupabaseServerClient();
     const skip = (page - 1) * limit;
 
-    const docs = await db
-      .collection("cluster")
-      .find({})
-      .sort({ momentum_score: -1 })
-      .skip(skip)
-      .limit(limit)
-      .toArray();
+    const { data: docs, error } = await supabase
+      .from("clusters")
+      .select("*")
+      .order("momentum_score", { ascending: false })
+      .range(skip, skip + limit - 1);
 
-    const results = docs.map((doc) => ({
-      id: String(doc._id),
+    if (error) {
+      throw error;
+    }
+
+    const results = (docs ?? []).map((doc) => ({
+      id: String(doc.id),
       name: doc.name,
       description: doc.description,
       total_signals: doc.total_signals ?? 0,
@@ -58,7 +63,7 @@ export async function GET(request: Request) {
     return NextResponse.json(results);
   } catch {
     return NextResponse.json(
-      { detail: "Database client not initialized" },
+      { detail: "Supabase client not initialized" },
       { status: 503 },
     );
   }

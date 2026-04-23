@@ -1,56 +1,123 @@
 # Market Pulse
 
-Market Pulse is an AI-powered market demand scanner. It ingests social platform data, processes it via AI to determine trending topics, and provides real-time market signals for SaaS builders and researchers.
+Market Pulse is an AI-powered market intelligence platform that ingests public social signals, enriches them with AI, clusters related demand patterns, and serves ranked opportunities in a web feed.
 
-## Folder Structure
+This README is written for contributors. It explains how to run the project, how the system is structured, and how to contribute safely and consistently.
+
+## What This Project Does
+
+- Collects raw signals from external platforms.
+- Enriches signals with AI sentiment, summary, and topics.
+- Generates embeddings and clusters semantically related signals.
+- Computes cluster-level opportunity metrics.
+- Serves cluster and signal data via Next.js API routes.
+- Renders an interactive feed UI for exploration.
+
+## Repository Layout
 
 ```
 market-pulse/
-├── frontend/                # Next.js app
-├── backend/                 # legacy FastAPI API layer (optional, no longer required)
-├── worker/                  # Background jobs (Gemini API + ingestion)
-├── infrastructure/          # Deployment configs
-├── docker-compose.yml       # Composes all services
-├── .env.example             # Shared environment vars
-└── README.md                # Project documentation
+├── frontend/                 # Next.js app + API routes
+├── worker/                   # Scheduled ingestion and processing pipeline
+├── supabase/
+│   └── schema.sql            # Postgres schema to initialize Supabase
+├── docker-compose.yml        # Local multi-service runtime
+├── .env.example              # Shared env template
+└── README.md
 ```
 
-## Setup Instructions
+## Architecture
 
-### Pre-requisites
+### Frontend (`frontend/`)
 
-- Docker & Docker Compose
-- Node.js (for local frontend dev)
-- Python 3.11+ (for local worker dev)
+- Framework: Next.js App Router.
+- UI: React + Tailwind CSS.
+- API: Route handlers under `frontend/app/api/*`.
+- Data source: Supabase Postgres (server-side via `frontend/lib/server/supabase.ts`).
 
-### Docker Flow
+### Worker (`worker/`)
 
-1. Clone the project.
-2. Copy `.env.example` to `.env` and fill the variables (especially `GOOGLE_API_KEY` and `PH_TOKEN`).
-   ```bash
-   cp .env.example .env
-   ```
-3. Run with Docker Compose:
-   ```bash
-   docker-compose up --build
-   ```
-4. Access applications:
-   - Frontend: `http://localhost:3000`
-   - API Health: `http://localhost:3000/api/health`
+- Runtime: Python 3.11+.
+- Scheduler: `worker/scheduler.py` runs pipeline every 10 minutes.
+- Orchestration: `worker/tasks.py`.
+- Ingestion: `worker/ingestion/*`.
+- Processing: `worker/processing/*` (AI, embeddings, clustering, scoring).
+- Persistence: Supabase client + Postgres tables.
 
-### Development Flow (Local)
+### Database (`supabase/`)
 
-**Worker:**
+- `supabase/schema.sql` defines the current schema.
+- Core tables:
+  - `signals`
+  - `clusters`
+
+## Prerequisites
+
+- Docker + Docker Compose
+- Node.js 20+
+- Python 3.11+
+- A Supabase project
+- API credentials for data/AI providers you want to run
+
+## Environment Variables
+
+Copy `.env.example` to `.env`:
+
+```bash
+cp .env.example .env
+```
+
+Minimum required for both services:
+
+- `SUPABASE_URL`
+- `SUPABASE_SERVICE_ROLE_KEY`
+
+Worker-specific values (recommended for full pipeline):
+
+- `GOOGLE_API_KEY`
+- `PH_TOKEN`
+- `STACK_OVERFLOW_API_KEY`
+- `REDDIT_CLIENT_ID`
+- `REDDIT_SECRET`
+- `REDDIT_USER_AGENT`
+- `ENVIRONMENT`
+
+Security notes:
+
+- Never expose `SUPABASE_SERVICE_ROLE_KEY` in client-side code.
+- Never commit real secrets into git.
+
+## First-Time Setup
+
+1. Create your Supabase project.
+2. Open Supabase SQL Editor.
+3. Run all SQL from `supabase/schema.sql`.
+4. Populate `.env` from `.env.example`.
+
+## Run With Docker (Recommended)
+
+```bash
+docker compose up --build
+```
+
+Endpoints:
+
+- Frontend: `http://localhost:3000`
+- Health: `http://localhost:3000/api/health`
+
+## Run Locally Without Docker
+
+### Worker
 
 ```bash
 cd worker
-python -m venv venv
-source venv/bin/activate
+python -m venv .venv
+source .venv/bin/activate
 pip install -r requirements.txt
 python scheduler.py
 ```
 
-**Frontend:**
+### Frontend
 
 ```bash
 cd frontend
@@ -58,70 +125,78 @@ npm install
 npm run dev
 ```
 
-## Core Software Functionality
+If running frontend directly, ensure env vars are available in `frontend/.env.local` or your shell.
 
-Market Pulse is built around a recurring data pipeline that turns raw social signals into structured market intelligence.
+## Contributor Workflow
 
-### 1) Data Ingestion (Scraping / Collection)
+1. Fork/branch from `main`.
+2. Keep PRs focused and small.
+3. Write clear commit messages.
+4. Update docs when behavior/config changes.
+5. Open a PR with context, screenshots (if UI), and test notes.
 
-- Periodically collects public signals from external platforms.
-- Current active ingestion includes Hacker News and Product Hunt.
-- Reddit ingestion support exists in the worker codebase and can be enabled as part of roadmap progression.
-- Each ingested item is normalized into a common signal format (source, title/content, URL, timestamp, engagement metadata).
+Suggested branch naming:
 
-### 2) AI Enrichment
+- `feat/<short-description>`
+- `fix/<short-description>`
+- `chore/<short-description>`
 
-- Generates AI summaries for each signal.
-- Assigns AI sentiment and topical tags.
-- Produces embedding vectors for semantic similarity analysis.
-- Enriched fields are stored with the original signal for downstream clustering and ranking.
+## Coding Guidelines
 
-### 3) Semantic Clustering
+### General
 
-- Groups related signals into market clusters using embedding similarity.
-- Maintains a centroid per cluster and assigns new signals to the best-fitting cluster.
-- Supports creating new clusters when no existing centroid is close enough.
-- Maintains cluster snapshots over time for historical trend analysis.
+- Prefer simple, readable code over clever code.
+- Keep functions focused and side effects explicit.
+- Avoid unrelated refactors in feature/fix PRs.
 
-### 4) Opportunity Scoring
+### Frontend
 
-- Computes cluster-level metrics such as:
-  - total signal volume
-  - startup vs discussion distribution
-  - average sentiment
-  - momentum score
-  - pain score
-  - opportunity score
-- These scores are used to rank and surface high-potential market opportunities.
+- Keep API response shapes stable when possible.
+- Use `lib/api.ts` for client-fetch patterns.
+- Keep UI components in `app/feed/sections` focused/presentational.
 
-### 5) Feed and API Functionality
+### Worker
 
-- Exposes cluster and signal data through API endpoints.
-- Supports paginated/infinite feed loading.
-- Provides per-cluster detail views with signal-level AI metadata.
-- Uses MongoDB as the shared store between worker processing and API reads.
+- Treat ingestion output as untrusted input; validate fields defensively.
+- Keep pipeline steps idempotent where possible.
+- Log key step boundaries and failures with useful context.
 
-### 6) Scheduling and Runtime
+## Testing and Validation
 
-- Worker runs as a scheduled background process (default interval: every 10 minutes).
-- The pipeline is designed to continuously refresh intelligence as new external signals arrive.
-- Can run locally or through Docker Compose as part of the full stack.
+Current repo has limited formal test automation.
 
-## Tech Stack
+Before opening a PR, run at least:
 
-- **Frontend:** Next.js (App Router), Tailwind CSS
-- **API Layer:** Next.js Route Handlers (serverless/server runtime)
-- **Worker:** Python, Google Gemini SDK
-- **AI/LLM:** Google Gemini (Generative AI & Semantic Embeddings)
-- **Database:** MongoDB
-- **Infrastructure:** Docker, Docker Compose
+- Frontend dev build/lint flow (`npm run dev`, `npm run lint` if configured)
+- Worker pipeline smoke run with representative env vars
+- Manual API checks for:
+  - `/api/health`
+  - `/api/clusters`
+  - `/api/signals`
+  - `/api/clusters/:clusterId/signals`
 
-## Future Roadmap
+If you add a bug fix, include reproduction and verification steps in the PR description.
 
-- [x] Integrate Hacker News and Product Hunt ingestion
-- [x] Implement semantic embeddings via Google Gemini API
-- [ ] Connect Reddit API with PRAW
-- [ ] Add vector database (e.g. Qdrant or Pinecone) for similarity search
-- [ ] Switch Worker simple scheduler to a robust queue system (Celery/RabbitMQ)
-- [ ] Implement user authentication and personalized dashboards
-- [ ] Add support for X (Twitter), LinkedIn, and Telegram scanning
+## Common Pitfalls
+
+- Using Supabase publishable key where service role key is required.
+- Forgetting to run `supabase/schema.sql` before starting services.
+- Introducing breaking API response changes without updating frontend consumers.
+- Assuming all external API credentials are available in every environment.
+
+## Roadmap
+
+- [x] Hacker News and Product Hunt ingestion
+- [x] AI semantic enrichment and clustering
+- [ ] Reddit ingestion hardening
+- [ ] Vector DB integration for high-scale similarity search
+- [ ] Queue-based worker orchestration (Celery/RabbitMQ or equivalent)
+- [ ] Auth and personalized dashboards
+- [ ] Additional source connectors (X, LinkedIn, Telegram)
+
+## Getting Help
+
+If you get stuck while contributing:
+
+- Open an issue with logs, env context (without secrets), and reproduction steps.
+- Tag the affected area clearly: `frontend`, `worker`, `database`, or `infra`.

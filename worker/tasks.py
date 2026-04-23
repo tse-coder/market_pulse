@@ -17,24 +17,23 @@ def run_pipeline():
     # connect to db
     connect()
 
-    # Ingestion
     # hn_posts = fetch_hackernews(limit=40)
     # save_hacker_news(hn_posts)
 
     # ph_posts = fetch_producthunt(limit=40)
     # save_product_hunt(ph_posts)
 
-    so_posts = fetch_stackoverflow(limit=40)
-    save_stack_overflow(so_posts)
+    # so_posts = fetch_stackoverflow(limit=40)
+    # save_stack_overflow(so_posts)
 
-    # AI Processing
-    process_ai_intelligence(limit=120)
+    # # AI Processing
+    # process_ai_intelligence(limit=120)
 
     # Semantic Clustering
     process_semantic_clustering(limit=120)
 
     # Time-Decay Score Refresh
-    refresh_intelligence_scores(time_window_hours=48)
+    # refresh_intelligence_scores(time_window_hours=48)
 
     # Refresh Cluster Aggregate Metrics
     refresh_cluster_metrics()

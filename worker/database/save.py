@@ -1,10 +1,20 @@
 from .connect import connect
-from .models.signal import Signal
 from datetime import datetime
 import logging
 
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
+
+
+def _upsert_signal(payload: dict):
+    client = connect()
+    response = (
+        client.table("signals")
+        .upsert(payload, on_conflict="external_id")
+        .execute()
+    )
+    if getattr(response, "error", None):
+        raise RuntimeError(str(response.error))
 
 
 def save_hacker_news(posts):
@@ -18,22 +28,23 @@ def save_hacker_news(posts):
         except Exception:
             parsed_time = datetime.utcnow()
 
-        signal = Signal(
-            platform="hacker_news",
-            external_id=post["id"],
-            title=post["title"],
-            content=post["content"],
-            score=post.get("score", 0),
-            time=parsed_time,
-            url=post["url"],
-            metadata={
+        signal_payload = {
+            "platform": "hacker_news",
+            "external_id": str(post["id"]),
+            "title": post.get("title"),
+            "content": post.get("content", ""),
+            "score": post.get("score", 0),
+            "time": parsed_time.isoformat(),
+            "url": post.get("url"),
+            "metadata": {
                 "author": post.get("author"),
                 "type": post.get("raw_data", {}).get("type"),
                 "descendants": post.get("raw_data", {}).get("descendants"),
             },
-        )
-        signal.save()
-        logger.info(f"Saved HN signal: {signal.external_id}")
+            "updated_at": datetime.utcnow().isoformat(),
+        }
+        _upsert_signal(signal_payload)
+        logger.info(f"Saved HN signal: {signal_payload['external_id']}")
 
 
 def save_product_hunt(posts):
@@ -51,18 +62,19 @@ def save_product_hunt(posts):
         except Exception:
             parsed_time = datetime.utcnow()
 
-        signal = Signal(
-            platform="product_hunt",
-            external_id=post["id"],
-            title=post["name"],
-            content=post["description"],
-            score=post.get("votesCount", 0),
-            time=parsed_time,
-            url=post["url"],
-            metadata={"tagline": post.get("tagline")},
-        )
-        signal.save()
-        logger.info(f"Saved PH signal: {signal.external_id}")
+        signal_payload = {
+            "platform": "product_hunt",
+            "external_id": str(post["id"]),
+            "title": post.get("name"),
+            "content": post.get("description", ""),
+            "score": post.get("votesCount", 0),
+            "time": parsed_time.isoformat(),
+            "url": post.get("url"),
+            "metadata": {"tagline": post.get("tagline")},
+            "updated_at": datetime.utcnow().isoformat(),
+        }
+        _upsert_signal(signal_payload)
+        logger.info(f"Saved PH signal: {signal_payload['external_id']}")
 
 
 def save_stack_overflow(posts):
@@ -77,15 +89,15 @@ def save_stack_overflow(posts):
             parsed_time = datetime.utcnow()
 
         raw_data = post.get("raw_data", {})
-        signal = Signal(
-            platform="stack_overflow",
-            external_id=f"so_{post['id']}",
-            title=post.get("title", "No title"),
-            content=post.get("content", ""),
-            score=post.get("score", 0),
-            time=parsed_time,
-            url=post.get("url", ""),
-            metadata={
+        signal_payload = {
+            "platform": "stack_overflow",
+            "external_id": f"so_{post['id']}",
+            "title": post.get("title", "No title"),
+            "content": post.get("content", ""),
+            "score": post.get("score", 0),
+            "time": parsed_time.isoformat(),
+            "url": post.get("url", ""),
+            "metadata": {
                 "author": post.get("author"),
                 "tags": raw_data.get("tags", []),
                 "answer_count": raw_data.get("answer_count", 0),
@@ -93,6 +105,7 @@ def save_stack_overflow(posts):
                 "is_answered": raw_data.get("is_answered", False),
                 "accepted_answer_id": raw_data.get("accepted_answer_id"),
             },
-        )
-        signal.save()
-        logger.info(f"Saved SO signal: {signal.external_id}")
+            "updated_at": datetime.utcnow().isoformat(),
+        }
+        _upsert_signal(signal_payload)
+        logger.info(f"Saved SO signal: {signal_payload['external_id']}")

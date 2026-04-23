@@ -1,4 +1,4 @@
-version: '3.8'
+version: "3.8"
 
 services:
   worker:
@@ -7,11 +7,9 @@ services:
       dockerfile: Dockerfile
     container_name: market_pulse_worker
     environment:
-      - MONGO_URI=mongodb://mongodb:27017
-      - DATABASE_NAME=market_pulse
+      - SUPABASE_URL=${SUPABASE_URL}
+      - SUPABASE_SERVICE_ROLE_KEY=${SUPABASE_SERVICE_ROLE_KEY}
       - ENVIRONMENT=development
-    depends_on:
-      - mongodb
 
   frontend:
     build:
@@ -21,18 +19,5 @@ services:
     ports:
       - "3000:3000"
     environment:
-      - MONGO_URI=mongodb://mongodb:27017
-      - DATABASE_NAME=market_pulse
-    depends_on:
-      - mongodb
-
-  mongodb:
-    image: mongo:6.0
-    container_name: market_pulse_db
-    ports:
-      - "27017:27017"
-    volumes:
-      - mongo_data:/data/db
-
-volumes:
-  mongo_data:
+      - SUPABASE_URL=${SUPABASE_URL}
+      - SUPABASE_SERVICE_ROLE_KEY=${SUPABASE_SERVICE_ROLE_KEY}

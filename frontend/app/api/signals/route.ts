@@ -1,5 +1,8 @@
 import { NextResponse } from "next/server";
-import { getDatabase, dateToIsoString } from "@/lib/server/mongodb";
+import {
+  getSupabaseServerClient,
+  dateToIsoString,
+} from "@/lib/server/supabase";
 
 export const runtime = "nodejs";
 
@@ -29,19 +32,21 @@ export async function GET(request: Request) {
   }
 
   try {
-    const db = await getDatabase();
+    const supabase = getSupabaseServerClient();
     const skip = (page - 1) * limit;
 
-    const docs = await db
-      .collection("signal")
-      .find({})
-      .sort({ total_score: -1 })
-      .skip(skip)
-      .limit(limit)
-      .toArray();
+    const { data: docs, error } = await supabase
+      .from("signals")
+      .select("*")
+      .order("total_score", { ascending: false })
+      .range(skip, skip + limit - 1);
 
-    const results = docs.map((doc) => ({
-      id: String(doc._id),
+    if (error) {
+      throw error;
+    }
+
+    const results = (docs ?? []).map((doc) => ({
+      id: String(doc.id),
       platform: doc.platform,
       title: doc.title,
       content: doc.content,
@@ -64,7 +69,7 @@ export async function GET(request: Request) {
     return NextResponse.json(results);
   } catch {
     return NextResponse.json(
-      { detail: "Database client not initialized" },
+      { detail: "Supabase client not initialized" },
       { status: 503 },
     );
   }
@@ -73,16 +78,24 @@ export async function GET(request: Request) {
 export async function POST(request: Request) {
   try {
     const payload = await request.json();
-    const db = await getDatabase();
+    const supabase = getSupabaseServerClient();
+    const { data, error } = await supabase
+      .from("signals")
+      .insert(payload)
+      .select("id")
+      .single();
 
-    const result = await db.collection("signal").insertOne(payload);
+    if (error) {
+      throw error;
+    }
+
     return NextResponse.json({
       message: "Signal created successfully",
-      id: String(result.insertedId),
+      id: String(data.id),
     });
   } catch {
     return NextResponse.json(
-      { detail: "Database client not initialized" },
+      { detail: "Supabase client not initialized" },
       { status: 503 },
     );
   }
