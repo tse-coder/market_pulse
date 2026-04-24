@@ -77,8 +77,9 @@ def process_semantic_clustering(limit: int = 20):
 
     for sig, vector in zip(no_embeddings, vectors):
         normalized_v = l2_normalize(vector)
+        vector_str = f"[{','.join(map(str, normalized_v))}]"
         updates = {
-            "embedding_vector": normalized_v,
+            "embedding_vector": vector_str,
             "updated_at": datetime.utcnow().isoformat(),
         }
 
@@ -92,11 +93,12 @@ def process_semantic_clustering(limit: int = 20):
             update_cluster_centroid(cluster_id, sig)
         else:
             new_cluster_id = str(uuid4())
+            vector_str = f"[{','.join(map(str, normalized_v))}]"
             _table("clusters").insert(
                 {
                     "id": new_cluster_id,
                     "name": (sig.get("title") or "New Intelligence Sector")[:50],
-                    "embedding_centroid": normalized_v,
+                    "embedding_centroid": vector_str,
                     "primary_tags": sig.get("ai_topics") or [],
                     "total_signals": 1,
                     "total_startups": 1 if sig.get("type") == "startup" else 0,
@@ -107,6 +109,7 @@ def process_semantic_clustering(limit: int = 20):
             logger.info(
                 f"Created new cluster {new_cluster_id} for signal {sig['external_id']}"
             )
+
 
         _table("signals").update(updates).eq("id", sig["id"]).execute()
 
@@ -138,49 +141,10 @@ def refresh_intelligence_scores(time_window_hours: int = 48):
 
 
 def refresh_cluster_metrics():
-    """Aggregates signal scores into cluster-level metadata"""
-    response = _table("clusters").select("id, name").execute()
-    clusters = response.data or []
-    logger.info(f"Refreshing metrics for {len(clusters)} clusters")
-
-    for cluster in clusters:
-        cluster_id = cluster["id"]
-        signal_response = (
-            _table("signals")
-            .select("sentiment_score, total_score")
-            .eq("cluster_id", cluster_id)
-            .execute()
-        )
-        signals = signal_response.data or []
-        if not signals:
-            continue
-
-        # 1. Average Sentiment
-        sentiments = [
-            s["sentiment_score"] for s in signals if s.get("sentiment_score") is not None
-        ]
-        avg_sentiment = sum(sentiments) / len(sentiments) if sentiments else 0.0
-
-        # 2. Momentum & Intelligence Score
-        # Cluster intelligence is average of underlying signal total_scores
-        scores = [s.get("total_score") for s in signals if (s.get("total_score") or 0) > 0]
-        momentum_score = sum(scores) / len(scores) if scores else 0.0
-
-        # 3. Pain vs Opportunity
-        # High Negative sentiment signals indicate "Pain"
-        pain_signals = len([s for s in signals if (s.get("sentiment_score") or 0) < -0.1])
-        pain_score = (pain_signals / len(signals)) * 100
-
-        # Opportunity is high momentum + positive sentiment
-        opportunity_score = (momentum_score * (1 + avg_sentiment)) / 2
-
-        _table("clusters").update(
-            {
-                "avg_sentiment": avg_sentiment,
-                "momentum_score": momentum_score,
-                "pain_score": pain_score,
-                "opportunity_score": opportunity_score,
-                "updated_at": datetime.utcnow().isoformat(),
-            }
-        ).eq("id", cluster_id).execute()
-        logger.info(f"Updated metrics for cluster: {cluster.get('name')}")
+    """Aggregates signal scores into cluster-level metadata via database RPC"""
+    logger.info("Refreshing cluster metrics via SQL RPC...")
+    try:
+        get_supabase().rpc("refresh_all_cluster_metrics", {}).execute()
+        logger.info("Cluster metrics refreshed successfully.")
+    except Exception as e:
+        logger.error(f"Error refreshing cluster metrics: {e}")

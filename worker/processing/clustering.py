@@ -25,33 +25,31 @@ def calculate_cosine_similarity(v1: List[float], v2: List[float]) -> float:
     return np.dot(v1, v2)
 
 
+import json
+
 def find_best_cluster(
     embedding: List[float], threshold: float = 0.78
 ) -> Tuple[Optional[str], float]:
     """
-    Finds the existing cluster that best matches the given embedding.
+    Finds the existing cluster that best matches the given embedding using pgvector.
     Returns (cluster_id, similarity_score).
     """
-    best_cluster_id = None
-    max_similarity = -1.0
+    try:
+        # Use formatting suitable for pgvector (passing list natively usually works, 
+        # but string formatting '[0.1,0.2]' is safest)
+        vector_str = f"[{','.join(map(str, embedding))}]"
+        response = get_supabase().rpc(
+            "match_cluster", 
+            {"query_embedding": vector_str, "match_threshold": threshold}
+        ).execute()
 
-    response = get_supabase().table("clusters").select("id, embedding_centroid").execute()
-    all_clusters = response.data or []
+        if response.data and len(response.data) > 0:
+            match = response.data[0]
+            return str(match["id"]), float(match["similarity"])
+    except Exception as e:
+        logger.error(f"Error calling match_cluster rpc: {e}")
 
-    for cluster in all_clusters:
-        centroid = cluster.get("embedding_centroid") or []
-        if not centroid:
-            continue
-
-        similarity = calculate_cosine_similarity(embedding, centroid)
-        if similarity > max_similarity:
-            max_similarity = similarity
-            best_cluster_id = str(cluster["id"])
-
-    if max_similarity >= threshold:
-        return best_cluster_id, max_similarity
-
-    return None, max_similarity
+    return None, -1.0
 
 
 def update_cluster_centroid(cluster_id: str, signal, alpha: float = 0.1):
@@ -78,10 +76,21 @@ def update_cluster_centroid(cluster_id: str, signal, alpha: float = 0.1):
     }
 
     if cluster.get("embedding_centroid") and signal.get("embedding_vector"):
-        current_centroid = np.array(cluster["embedding_centroid"])
-        new_v = np.array(signal["embedding_vector"])
+        raw_centroid = cluster["embedding_centroid"]
+        if isinstance(raw_centroid, str):
+            raw_centroid = json.loads(raw_centroid)
+        
+        raw_signal = signal["embedding_vector"]
+        if isinstance(raw_signal, str):
+            raw_signal = json.loads(raw_signal)
+
+        current_centroid = np.array(raw_centroid)
+        new_v = np.array(raw_signal)
+        
         updated_centroid = (1 - alpha) * current_centroid + alpha * new_v
-        updates["embedding_centroid"] = l2_normalize(updated_centroid.tolist())
+        
+        # pgvector expects string representation or list
+        updates["embedding_centroid"] = f"[{','.join(map(str, l2_normalize(updated_centroid.tolist())))}]"
 
     if signal.get("type") == "startup":
         updates["total_startups"] += 1
@@ -90,3 +99,4 @@ def update_cluster_centroid(cluster_id: str, signal, alpha: float = 0.1):
 
     get_supabase().table("clusters").update(updates).eq("id", cluster_id).execute()
     logger.info(f"Updated cluster {cluster_id} with signal {signal.get('external_id')}")
+
