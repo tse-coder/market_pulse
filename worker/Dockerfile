@@ -7,5 +7,5 @@ RUN pip install --no-cache-dir -r requirements.txt
 
 COPY . .
 
-# Run the scheduler
-CMD ["python", "scheduler.py"]
+# Run celery worker by default
+CMD ["celery", "-A", "celery_app", "worker", "--loglevel=info"]

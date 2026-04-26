@@ -6,3 +6,4 @@ requests>=2.31.0
 google-genai
 numpy
 supabase>=2.7.4
+celery[redis]>=5.3.0

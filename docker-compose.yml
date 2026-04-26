@@ -1,15 +1,39 @@
 version: "3.8"
 
 services:
+  redis:
+    image: redis:7-alpine
+    container_name: market_pulse_redis
+    ports:
+      - "6379:6379"
+
   worker:
     build:
       context: ./worker
       dockerfile: Dockerfile
     container_name: market_pulse_worker
+    command: celery -A celery_app worker --loglevel=info
+    depends_on:
+      - redis
     environment:
       - SUPABASE_URL=${SUPABASE_URL}
       - SUPABASE_SERVICE_ROLE_KEY=${SUPABASE_SERVICE_ROLE_KEY}
       - ENVIRONMENT=development
+      - REDIS_URL=redis://redis:6379/0
+
+  beat:
+    build:
+      context: ./worker
+      dockerfile: Dockerfile
+    container_name: market_pulse_beat
+    command: celery -A celery_app beat --loglevel=info
+    depends_on:
+      - redis
+    environment:
+      - SUPABASE_URL=${SUPABASE_URL}
+      - SUPABASE_SERVICE_ROLE_KEY=${SUPABASE_SERVICE_ROLE_KEY}
+      - ENVIRONMENT=development
+      - REDIS_URL=redis://redis:6379/0
 
   frontend:
     build:
