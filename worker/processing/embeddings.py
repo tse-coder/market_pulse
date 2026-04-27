@@ -40,7 +40,7 @@ def generate_embeddings(
 
     except Exception as e:
         logger.error(f"Error generating embeddings with Gemini: {e}")
-        return []
+        raise e
 
 
 def get_single_embedding(text: str) -> Optional[List[float]]:

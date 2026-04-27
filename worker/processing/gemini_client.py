@@ -17,32 +17,36 @@ def process_signals_batch(signals_data):
 
     client = genai.Client(api_key=settings.GOOGLE_API_KEY)
 
-    # Prepare the prompt
-    prompt = (
-        "You are a market analyst. Analyze the following signals and provide:\n"
-        "1. Sentiment (Positive, Negative, or Neutral)\n"
-        "2. A brief summary (1-2 sentences)\n"
-        "3. A list of key topics\n"
-        "4. Similarity grouping: Assign a unique 'cluster_id' string (e.g., 'cluster_1') to signals that talk about the same specific event, product, or news. If a signal is unique, give it a unique ID.\n\n"
-        "Response MUST be a valid JSON array of objects with the following keys: "
-        "'external_id', 'sentiment', 'summary', 'topics', 'cluster_id'.\n\n"
-        "Signals:\n"
-    )
-
-    for signal in signals_data:
-        prompt += f"--- ID: {signal['external_id']} ---\nTitle: {signal['title']}\nContent: {signal['content']}\n\n"
-
-    try:
-        response = client.models.generate_content(
-            model="gemini-2.5-flash",
-            contents=prompt,
-            config={
-                "response_mime_type": "application/json",
-            },
+    results = []
+    chunk_size = 20
+    for i in range(0, len(signals_data), chunk_size):
+        chunk = signals_data[i:i + chunk_size]
+        
+        prompt = (
+            "You are a market analyst. Analyze the following signals and provide:\n"
+            "1. Sentiment (Positive, Negative, or Neutral)\n"
+            "2. A brief summary (1-2 sentences)\n"
+            "3. A list of key topics\n"
+            "4. Similarity grouping: Assign a unique 'cluster_id' string (e.g., 'cluster_1') to signals that talk about the same specific event, product, or news. If a signal is unique, give it a unique ID.\n\n"
+            "Response MUST be a valid JSON array of objects with the following keys: "
+            "'external_id', 'sentiment', 'summary', 'topics', 'cluster_id'.\n\n"
+            "Signals:\n"
         )
+        
+        for signal in chunk:
+            prompt += f"--- ID: {signal['external_id']} ---\nTitle: {signal['title']}\nContent: {signal['content']}\n\n"
+        
+        try:
+            response = client.models.generate_content(
+                model="gemini-2.5-flash",
+                contents=prompt,
+                config={
+                    "response_mime_type": "application/json",
+                },
+            )
+            results.extend(json.loads(response.text))
+        except Exception as e:
+            logger.error(f"Error processing signals with Gemini: {e}")
+            raise e # Raise to trigger Celery retry with backoff
 
-        results = json.loads(response.text)
-        return results
-    except Exception as e:
-        logger.error(f"Error processing signals with Gemini: {e}")
-        return []
+    return results
