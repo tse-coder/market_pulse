@@ -5,6 +5,7 @@ import {
 } from "@/lib/server/supabase";
 
 export const runtime = "nodejs";
+export const revalidate = 60; // Cache responses for 60 seconds
 
 function parsePositiveInt(value: string | null, fallback: number) {
   if (!value) {

@@ -5,6 +5,7 @@ import {
 } from "@/lib/server/supabase";
 
 export const runtime = "nodejs";
+export const revalidate = 60;
 
 type ClusterSignalsParams = {
   params: Promise<{ clusterId: string }>;
