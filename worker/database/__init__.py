@@ -1,5 +1,5 @@
 from .connect import connect, get_supabase
-from .save import save_hacker_news, save_product_hunt, save_stack_overflow
+from .save import save_hacker_news, save_product_hunt, save_stack_overflow, save_dev_to, save_github
 
 __all__ = [
     "connect",
@@ -7,4 +7,6 @@ __all__ = [
     "save_hacker_news",
     "save_product_hunt",
     "save_stack_overflow",
+    "save_dev_to",
+    "save_github"
 ]

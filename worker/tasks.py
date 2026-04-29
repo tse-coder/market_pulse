@@ -1,7 +1,7 @@
 import logging
 from celery_app import celery_app
-from database import connect, save_hacker_news, save_product_hunt, save_stack_overflow
-from ingestion import fetch_hackernews, fetch_producthunt, fetch_stackoverflow
+from database import connect, save_hacker_news, save_product_hunt, save_stack_overflow, save_dev_to, save_github
+from ingestion import fetch_hackernews, fetch_producthunt, fetch_stackoverflow, fetch_dev_to, fetch_github
 from processing import (
     process_ai_intelligence,
     process_semantic_clustering,
@@ -45,6 +45,28 @@ def fetch_stackoverflow_task(self):
         logger.error(f"SO ingestion failed: {exc}")
         raise self.retry(exc=exc, countdown=60)
 
+@celery_app.task(bind=True, max_retries=3)
+def fetch_dev_to_task(self):
+    connect()
+    try:
+        posts = fetch_dev_to(limit=40)
+        save_dev_to(posts)
+        logger.info("Dev.to ingestion complete")
+    except Exception as exc:
+        logger.error(f"Dev.to ingestion failed: {exc}")
+        raise self.retry(exc=exc, countdown=60)
+
+@celery_app.task(bind=True, max_retries=3)
+def fetch_github_task(self):
+    connect()
+    try:
+        posts = fetch_github(limit=40)
+        save_github(posts)
+        logger.info("GitHub ingestion complete")
+    except Exception as exc:
+        logger.error(f"GitHub ingestion failed: {exc}")
+        raise self.retry(exc=exc, countdown=60)
+
 
 @celery_app.task
 def ingest_all_sources():
@@ -52,6 +74,8 @@ def ingest_all_sources():
     fetch_hackernews_task.delay()
     fetch_producthunt_task.delay()
     fetch_stackoverflow_task.delay()
+    fetch_dev_to_task.delay()
+    fetch_github_task.delay()
 
 
 @celery_app.task(bind=True, max_retries=3)

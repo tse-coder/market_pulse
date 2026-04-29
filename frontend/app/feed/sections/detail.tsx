@@ -9,7 +9,7 @@ import {
   ChartTooltipContent,
   type ChartConfig,
 } from "@/components/ui/chart";
-import { CartesianGrid, Line, LineChart, XAxis } from "recharts";
+import { CartesianGrid, Line, LineChart, XAxis, BarChart, Bar } from "recharts";
 import ClusterAiSidebar from "./clusterAiSidebar";
 import { Sparkle, Sparkles } from "lucide-react";
 import Lottie from "lottie-react";
@@ -180,8 +180,9 @@ export default function DetailSection({
               </div> */}
             </div>
 
-            <div className="pr-2 sm:pr-4">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4 pr-2 sm:pr-4">
               <div className="relative rounded-2xl border border-zinc-200/80 bg-white/60 p-2">
+                <h4 className="mb-2 text-center text-[10px] font-medium uppercase tracking-[0.16em] text-zinc-500">Momentum Trend</h4>
                 <ChartContainer config={chartConfig} className="h-40 w-full">
                   <LineChart
                     accessibilityLayer
@@ -216,6 +217,36 @@ export default function DetailSection({
                       }}
                     />
                   </LineChart>
+                </ChartContainer>
+              </div>
+
+              <div className="relative rounded-2xl border border-zinc-200/80 bg-white/60 p-2">
+                <h4 className="mb-2 text-center text-[10px] font-medium uppercase tracking-[0.16em] text-zinc-500">Source Distribution</h4>
+                <ChartContainer config={{ count: { label: "Signals", color: "#14b8a6" } }} className="h-40 w-full">
+                  <BarChart
+                    accessibilityLayer
+                    data={Object.entries(
+                      signals.reduce((acc, s) => {
+                        acc[s.platform] = (acc[s.platform] || 0) + 1;
+                        return acc;
+                      }, {} as Record<string, number>)
+                    ).map(([platform, count]) => ({ platform: platform.replace("_", " "), count }))}
+                    margin={{ top: 10, right: 10, left: -12, bottom: 10 }}
+                  >
+                    <CartesianGrid vertical={false} strokeDasharray="2 2" />
+                    <XAxis
+                      dataKey="platform"
+                      tickLine={false}
+                      axisLine={false}
+                      tickMargin={10}
+                      fontSize={10}
+                    />
+                    <ChartTooltip
+                      cursor={{ fill: "rgba(0,0,0,0.05)" }}
+                      content={<ChartTooltipContent />}
+                    />
+                    <Bar dataKey="count" fill="var(--color-count)" radius={[4, 4, 0, 0]} />
+                  </BarChart>
                 </ChartContainer>
               </div>
             </div>

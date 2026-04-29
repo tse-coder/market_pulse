@@ -109,3 +109,55 @@ def save_stack_overflow(posts):
         }
         _upsert_signal(signal_payload)
         logger.info(f"Saved SO signal: {signal_payload['external_id']}")
+
+def save_dev_to(posts):
+    """Saves fetched Dev.to articles to the database."""
+    for post in posts:
+        raw_time = post.get("time")
+        try:
+            parsed_time = datetime.fromisoformat(raw_time.replace("Z", "+00:00")) if raw_time else datetime.utcnow()
+        except Exception:
+            parsed_time = datetime.utcnow()
+
+        signal_payload = {
+            "platform": "dev_to",
+            "external_id": f"devto_{post['id']}",
+            "title": post.get("title", "No title"),
+            "content": post.get("content", ""),
+            "score": post.get("score", 0),
+            "time": parsed_time.isoformat(),
+            "url": post.get("url", ""),
+            "metadata": {
+                "author": post.get("author")
+            },
+            "updated_at": datetime.utcnow().isoformat(),
+        }
+        _upsert_signal(signal_payload)
+        logger.info(f"Saved Dev.to signal: {signal_payload['external_id']}")
+
+
+def save_github(posts):
+    """Saves fetched GitHub repositories to the database."""
+    for post in posts:
+        raw_time = post.get("time")
+        try:
+            parsed_time = datetime.fromisoformat(raw_time.replace("Z", "+00:00")) if raw_time else datetime.utcnow()
+        except Exception:
+            parsed_time = datetime.utcnow()
+
+        signal_payload = {
+            "platform": "github",
+            "external_id": f"github_{post['id']}",
+            "title": post.get("title", "No title"),
+            "content": post.get("content", ""),
+            "score": post.get("score", 0),
+            "time": parsed_time.isoformat(),
+            "url": post.get("url", ""),
+            "metadata": {
+                "author": post.get("author")
+            },
+            "updated_at": datetime.utcnow().isoformat(),
+        }
+        _upsert_signal(signal_payload)
+        logger.info(f"Saved GitHub signal: {signal_payload['external_id']}")
+

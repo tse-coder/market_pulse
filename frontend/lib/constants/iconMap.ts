@@ -8,4 +8,6 @@ export const iconMap: IconMap = {
     "stackoverflow": "/brand-icons/stack-overflow/logo.jpeg",
     "lobste": "/brand-icons/lobste/lobste-logo.png",
     "lobsters": "/brand-icons/lobste/lobste-logo.png",
+    "github": "https://github.githubassets.com/favicons/favicon.png",
+    "dev_to": "https://dev-to-uploads.s3.amazonaws.com/uploads/logos/resized_logo_UQww2soKuUsjaOGNB38o.png",
 }
