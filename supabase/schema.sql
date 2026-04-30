@@ -66,6 +66,25 @@ as $$
   where 1 - (embedding_centroid <=> query_embedding) > match_threshold
   order by embedding_centroid <=> query_embedding
   limit 1;
+$$;
+
+create or replace function search_clusters(query_embedding vector(768), match_threshold float, match_count int)
+returns table (
+  id uuid,
+  similarity float
+)
+language sql
+stable
+as $$
+  select
+    id,
+    1 - (embedding_centroid <=> query_embedding) as similarity
+  from clusters
+  where 1 - (embedding_centroid <=> query_embedding) > match_threshold
+  order by embedding_centroid <=> query_embedding
+  limit match_count;
+$$;
+
 create or replace function refresh_all_cluster_metrics()
 returns void
 language sql

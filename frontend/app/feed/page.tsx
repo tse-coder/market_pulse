@@ -32,13 +32,47 @@ export default function FeedPage() {
   const [hasMore, setHasMore] = useState<boolean>(true);
   const [isFetchingMore, setIsFetchingMore] = useState<boolean>(false);
   const loaderRef = useRef<HTMLDivElement | null>(null);
+  const [isWhitespaceMode, setIsWhitespaceMode] = useState<boolean>(false);
+  const [searchQuery, setSearchQuery] = useState<string>("");
+  const [isSearching, setIsSearching] = useState<boolean>(false);
   const selectedCluster = clusters.find((c) => c.id === selectedClusterId);
   const LIMIT = 25;
 
   useEffect(() => {
     let mounted = true;
+    setLoading(true);
+    setClusters([]); 
+    
+    if (searchQuery.trim().length > 0) {
+      setIsSearching(true);
+      fetch('/api/search', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ query: searchQuery })
+      })
+        .then(res => res.json())
+        .then(data => {
+          if (!mounted) return;
+          if (Array.isArray(data)) {
+            setClusters(data);
+          } else {
+            setError(data.detail || "Search failed");
+          }
+          setHasMore(false); // search doesn't paginate yet
+          setLoading(false);
+          setIsSearching(false);
+        })
+        .catch(err => {
+          if (!mounted) return;
+          setError(String(err));
+          setLoading(false);
+          setIsSearching(false);
+        });
+      return () => { mounted = false; };
+    }
 
-    fetchClusters(1, LIMIT)
+    // Default mode
+    fetchClusters(1, LIMIT, isWhitespaceMode)
       .then((data) => {
         if (!mounted) return;
         setClusters(data);
@@ -55,7 +89,7 @@ export default function FeedPage() {
     return () => {
       mounted = false;
     };
-  }, []);
+  }, [isWhitespaceMode, searchQuery]);
 
   // IntersectionObserver to load next page when loader visible
   useEffect(() => {
@@ -67,7 +101,7 @@ export default function FeedPage() {
         if (entry.isIntersecting && !isFetchingMore && hasMore && !loading) {
           const nextPage = page + 1;
           setIsFetchingMore(true);
-          fetchClusters(nextPage, LIMIT)
+          fetchClusters(nextPage, LIMIT, isWhitespaceMode)
             .then((data) => {
               setClusters((prev) => [...prev, ...data]);
               setHasMore(data.length === LIMIT);
@@ -83,6 +117,22 @@ export default function FeedPage() {
     observer.observe(node);
     return () => observer.disconnect();
   }, [page, isFetchingMore, hasMore, loading]);
+
+  const [searchInput, setSearchInput] = useState<string>("");
+  const debounceTimerRef = useRef<NodeJS.Timeout | null>(null);
+
+  const handleSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const value = e.target.value;
+    setSearchInput(value);
+    
+    if (debounceTimerRef.current) {
+      clearTimeout(debounceTimerRef.current);
+    }
+    
+    debounceTimerRef.current = setTimeout(() => {
+      setSearchQuery(value);
+    }, 500);
+  };
 
   return (
     <div className="flex h-[100svh] max-h-[100svh] flex-col overflow-hidden border-zinc-200/70 bg-white/45 backdrop-blur-sm">
@@ -101,6 +151,38 @@ export default function FeedPage() {
               Live Opportunity
             </p>
           </div>
+        </div>
+
+        <div className="flex flex-1 max-w-md mx-8">
+          <div className="relative w-full">
+            <svg className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-zinc-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+            </svg>
+            <input 
+              type="text" 
+              placeholder="Search markets semantically (e.g., 'AI tools for developers')..."
+              value={searchInput}
+              onChange={handleSearchChange}
+              className="w-full rounded-full border border-zinc-200 bg-zinc-50/50 py-1.5 pl-9 pr-4 text-sm text-zinc-800 focus:border-teal-500 focus:outline-none focus:ring-1 focus:ring-teal-500"
+            />
+          </div>
+        </div>
+        
+        <div className="flex items-center gap-3">
+          <label className="flex cursor-pointer items-center gap-2">
+            <span className={`text-[11px] font-semibold uppercase tracking-[0.15em] transition-colors ${isWhitespaceMode ? 'text-teal-700' : 'text-zinc-500'}`}>
+              Whitespace Mode
+            </span>
+            <div className={`relative h-5 w-9 rounded-full transition-colors ${isWhitespaceMode ? 'bg-teal-600' : 'bg-zinc-300'}`}>
+              <div className={`absolute top-0.5 left-0.5 h-4 w-4 rounded-full bg-white transition-transform ${isWhitespaceMode ? 'translate-x-4' : 'translate-x-0'}`} />
+            </div>
+            <input 
+              type="checkbox" 
+              className="sr-only" 
+              checked={isWhitespaceMode}
+              onChange={() => setIsWhitespaceMode(!isWhitespaceMode)} 
+            />
+          </label>
         </div>
       </header>
 

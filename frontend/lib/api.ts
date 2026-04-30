@@ -32,8 +32,12 @@ export async function fetchSignalsPage(page = 1, limit = 25) {
   return res.json();
 }
 
-export async function fetchClusters(page = 1, limit = 25) {
-  const res = await fetch(`${API_URL}/clusters/?page=${page}&limit=${limit}`);
+export async function fetchClusters(page = 1, limit = 25, whitespace = false) {
+  let url = `${API_URL}/clusters/?page=${page}&limit=${limit}`;
+  if (whitespace) {
+    url += "&whitespace=true";
+  }
+  const res = await fetch(url);
   if (!res.ok) {
     throw new Error("Failed to fetch clusters");
   }

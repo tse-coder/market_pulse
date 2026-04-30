@@ -36,9 +36,16 @@ export async function GET(request: Request) {
     const supabase = getSupabaseServerClient();
     const skip = (page - 1) * limit;
 
-    const { data: docs, error } = await supabase
-      .from("clusters")
-      .select("*")
+    let query = supabase.from("clusters").select("*");
+    
+    if (searchParams.get("whitespace") === "true") {
+      query = query
+        .eq("total_startups", 0)
+        .gt("total_discussions", 0)
+        .gt("pain_score", 0);
+    }
+
+    const { data: docs, error } = await query
       .order("momentum_score", { ascending: false })
       .range(skip, skip + limit - 1);
 
