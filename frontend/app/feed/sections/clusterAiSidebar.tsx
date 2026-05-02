@@ -1,5 +1,7 @@
 import React, { useEffect, useMemo, useRef, useState } from "react";
 import type { ClusterItem } from "../page";
+import { Sparkles } from "lucide-react";
+import ReactMarkdown from "react-markdown";
 
 type SignalType = "startup" | "discussion" | "prediction";
 
@@ -184,7 +186,20 @@ export default function ClusterAiSidebar({
           </div>
         </div>
 
-        <div className="scrollbar-minimal min-h-0 flex-1 space-y-2 overflow-y-auto px-2 py-3">
+        <div className="scrollbar-minimal min-h-0 flex-1 space-y-4 overflow-y-auto px-2 py-3">
+          {cluster.market_thesis && (
+            <div className="rounded border border-purple-200/80 bg-purple-50/60 p-3 text-sm leading-relaxed text-zinc-800 shadow-sm">
+              <div className="mb-2 text-[11px] font-bold uppercase tracking-[0.15em] text-purple-700 flex items-center gap-1">
+                <Sparkles size={12} /> Automated Market Thesis
+              </div>
+              <div className="prose prose-sm prose-zinc">
+                <ReactMarkdown>{cluster.market_thesis}</ReactMarkdown>
+              </div>
+            </div>
+          )}
+          
+          <div className="border-t border-zinc-200 pt-2 my-2" />
+
           {chatMessages.map((message) => (
             <div
               key={message.id}

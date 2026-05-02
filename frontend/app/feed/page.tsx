@@ -10,6 +10,7 @@ export type ClusterItem = {
   id: string;
   name: string;
   description?: string;
+  market_thesis?: string;
   total_signals: number;
   total_startups: number;
   total_discussions: number;

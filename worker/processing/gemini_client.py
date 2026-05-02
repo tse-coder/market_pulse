@@ -50,3 +50,38 @@ def process_signals_batch(signals_data):
             raise e # Raise to trigger Celery retry with backoff
 
     return results
+
+
+def generate_market_thesis(cluster_name, cluster_tags, signals_context):
+    """
+    Generates a markdown-formatted market thesis for a given cluster using Gemini.
+    """
+    if not settings.GOOGLE_API_KEY:
+        logger.warning("GOOGLE_API_KEY not set, skipping thesis generation")
+        return None
+
+    client = genai.Client(api_key=settings.GOOGLE_API_KEY)
+
+    prompt = (
+        f"You are an expert venture capitalist and market researcher. "
+        f"Write a short, insightful 'Market Thesis' in Markdown format for the following trend cluster.\n\n"
+        f"Cluster Name: {cluster_name}\n"
+        f"Tags/Topics: {', '.join(cluster_tags)}\n\n"
+        f"Context from recent signals (news/discussions/startups):\n"
+        f"{signals_context}\n\n"
+        f"The thesis should include:\n"
+        f"1. **Core Insight**: What is the fundamental shift happening here?\n"
+        f"2. **Why Now**: The catalyst driving this trend currently.\n"
+        f"3. **Opportunities/Risks**: Where the value will be captured, and what are the potential pitfalls.\n"
+        f"Keep it concise, analytical, and professional. Return ONLY the markdown text."
+    )
+
+    try:
+        response = client.models.generate_content(
+            model="gemini-2.5-flash",
+            contents=prompt,
+        )
+        return response.text
+    except Exception as e:
+        logger.error(f"Error generating thesis with Gemini: {e}")
+        return None

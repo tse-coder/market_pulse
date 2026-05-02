@@ -38,4 +38,12 @@ celery_app.conf.beat_schedule = {
         "task": "tasks.refresh_metrics",
         "schedule": 300.0,
     },
+    "generate-market-theses-every-15-mins": {
+        "task": "tasks.generate_market_theses_task",
+        "schedule": 900.0,
+    },
+    "broadcast-weekly-intel": {
+        "task": "tasks.broadcast_weekly_intel",
+        "schedule": crontab(day_of_week='mon', hour=8, minute=0),
+    },
 }

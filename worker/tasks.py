@@ -7,7 +7,10 @@ from processing import (
     process_semantic_clustering,
     refresh_intelligence_scores,
     refresh_cluster_metrics,
+    generate_cluster_theses,
 )
+import requests
+import os
 
 logger = logging.getLogger(__name__)
 
@@ -107,4 +110,52 @@ def refresh_metrics():
         refresh_cluster_metrics()
     except Exception as exc:
         logger.error(f"Metrics refresh failed: {exc}")
+
+@celery_app.task(bind=True, max_retries=3)
+def generate_market_theses_task(self):
+    connect()
+    try:
+        generate_cluster_theses(limit=5)
+    except Exception as exc:
+        logger.error(f"Thesis generation failed: {exc}")
+        raise self.retry(exc=exc, countdown=60)
+
+@celery_app.task
+def broadcast_weekly_intel():
+    """
+    Fetches the highest momentum cluster and pushes a summary to a webhook.
+    """
+    connect()
+    from database import get_supabase
+    
+    try:
+        webhook_url = os.environ.get("ALERT_WEBHOOK_URL")
+        if not webhook_url:
+            logger.warning("ALERT_WEBHOOK_URL not set, skipping broadcast.")
+            return
+
+        # Fetch top cluster by total signals (or momentum if calculated)
+        response = (
+            get_supabase().table("clusters")
+            .select("name, primary_tags, market_thesis, total_signals")
+            .order("total_signals", desc=True)
+            .limit(1)
+            .execute()
+        )
+        top_cluster = response.data[0] if response.data else None
+
+        if top_cluster:
+            tags_str = ", ".join(top_cluster.get("primary_tags") or [])
+            message = {
+                "content": f"🚀 **Top Market Trend This Week**: {top_cluster.get('name')}\n"
+                           f"**Tags**: {tags_str} | **Signals**: {top_cluster.get('total_signals')}\n"
+                           f"**Thesis**: {top_cluster.get('market_thesis') or 'Not generated yet.'}\n"
+            }
+            res = requests.post(webhook_url, json=message)
+            res.raise_for_status()
+            logger.info("Successfully broadcasted weekly intel.")
+        else:
+            logger.info("No clusters found to broadcast.")
+    except Exception as exc:
+        logger.error(f"Broadcast failed: {exc}")
 

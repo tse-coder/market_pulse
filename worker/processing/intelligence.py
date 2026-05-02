@@ -11,6 +11,7 @@ from processing import (
     update_cluster_centroid,
     calculate_intelligence_score,
 )
+from processing.gemini_client import generate_market_thesis
 
 logger = logging.getLogger(__name__)
 
@@ -148,3 +149,49 @@ def refresh_cluster_metrics():
         logger.info("Cluster metrics refreshed successfully.")
     except Exception as e:
         logger.error(f"Error refreshing cluster metrics: {e}")
+
+
+def generate_cluster_theses(limit: int = 5):
+    """
+    Identifies high-signal clusters lacking a market thesis and generates one via Gemini.
+    """
+    # Find top clusters (by signal count or momentum) that lack a thesis
+    response = (
+        _table("clusters")
+        .select("*")
+        .is_("market_thesis", "null")
+        .order("total_signals", desc=True)
+        .limit(limit)
+        .execute()
+    )
+    clusters = response.data or []
+    if not clusters:
+        logger.info("No clusters need a market thesis right now.")
+        return
+
+    logger.info(f"Generating theses for {len(clusters)} clusters")
+    for cluster in clusters:
+        # Fetch top signals for context
+        sig_response = (
+            _table("signals")
+            .select("title, ai_summary")
+            .eq("cluster_id", cluster["id"])
+            .order("total_score", desc=True)
+            .limit(10)
+            .execute()
+        )
+        signals = sig_response.data or []
+        context_lines = []
+        for s in signals:
+            context_lines.append(f"- {s.get('title')}: {s.get('ai_summary')}")
+        context_str = "\n".join(context_lines)
+
+        tags = cluster.get("primary_tags") or []
+        name = cluster.get("name") or "Unknown Trend"
+
+        thesis = generate_market_thesis(name, tags, context_str)
+        if thesis:
+            _table("clusters").update({"market_thesis": thesis}).eq("id", cluster["id"]).execute()
+            logger.info(f"Successfully generated and saved thesis for cluster {cluster['id']}")
+        else:
+            logger.warning(f"Failed to generate thesis for cluster {cluster['id']}")
