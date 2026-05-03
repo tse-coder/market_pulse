@@ -14,6 +14,7 @@ create table if not exists clusters (
   pain_score double precision not null default 0,
   opportunity_score double precision not null default 0,
   primary_tags text[] default '{}',
+  market_thesis text,
   created_at timestamptz not null default timezone('utc', now()),
   updated_at timestamptz not null default timezone('utc', now())
 );
