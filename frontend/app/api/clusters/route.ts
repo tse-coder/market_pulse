@@ -65,6 +65,7 @@ export async function GET(request: Request) {
       pain_score: doc.pain_score ?? 0,
       opportunity_score: doc.opportunity_score ?? 0,
       primary_tags: doc.primary_tags ?? [],
+      market_thesis: doc.market_thesis ?? null,
       created_at: dateToIsoString(doc.created_at),
     }));
 
